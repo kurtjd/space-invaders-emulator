@@ -3,15 +3,15 @@
 Exactly what it sounds like.
 
 ## Build
-`mkdir build && cd build`
-`cmake -B. --config Release ..`
+`mkdir build && cd build`  
+`cmake -B. --config Release ..`  
 `make`
 
 ## Run
 ### Linux
-`./intel-8080-emu`
+`./intel-8080-emu`  
 `./intel-8080-tests` (for unit tests)
 
 ### Windows
-`intel-8080-emu.exe`
+`intel-8080-emu.exe`  
 `./intel-8080-tests.exe` (for unit tests)
