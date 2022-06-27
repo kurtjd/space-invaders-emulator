@@ -14,4 +14,4 @@ Exactly what it sounds like.
 
 ### Windows
 `intel-8080-emu.exe`  
-`./intel-8080-tests.exe` (for unit tests)
+`intel-8080-tests.exe` (for unit tests)
