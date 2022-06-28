@@ -15,3 +15,8 @@ Exactly what it sounds like.
 ### Windows
 `intel-8080-emu.exe`  
 `intel-8080-tests.exe` (for unit tests)
+
+## References
+[Intel 8080 User/Assembly Manuals](docs)  
+[Computer Archaeology](https://www.computerarcheology.com/Arcade/SpaceInvaders/)  
+[Emulator 101](http://www.emulator101.com/welcome.html)  

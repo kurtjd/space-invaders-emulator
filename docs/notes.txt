@@ -1,0 +1,25 @@
+This is just a random assortment of notes to keep track of things
+
+-CHIP-8, which was essentially an entire (virtual) "computer" that not only 
+included a "CPU", but memory, display, keyboard, buzzer, etc. This meant that 
+all "ROMs" were essentially written with this entire "computer" in mind.
+
+-However, Intel 8080 is (obviously) just a CPU and different systems may have 
+had very different memory, peripherals, display, etc. Thus, it is likely not 
+going to be as simple as making one general-purpose emulator for all 8080-based 
+systems.
+
+-Once we have the CPU emulated, we will likely then have to specifically 
+emulate different 8080-platforms (with Space Invaders being the most common 
+of course).
+
+-Having said that, it is probably worthwhile to decouple as many 
+platform-dependent features (like peripherals and display) from the main CPU 
+emulator as possible. For now the RAM is coupled with the CPU emulator 
+since, although technically RAM is separate from the CPU, it seems to make sense 
+to keep it there since it's just a simple array. Though this can change if we 
+feel it makes sense.
+
+-For my own enjoyment, and to make testing a bit easier, I plan to write a bare-
+bones 8080 assembler to allow making test ROMs easier (so we don't have to 
+manually use a hex editor to punch hex opcodes into a binary file haha).
