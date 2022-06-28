@@ -2,7 +2,7 @@
 
 void test_NOP(void) {
     CPU cpu;
-    cpu_reset(&cpu);
+    cpu_init(&cpu);
     // Test stuff here eventually
 }
 

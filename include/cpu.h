@@ -7,10 +7,11 @@
 
 #define NUM_OPCODES 0xFF
 #define NUM_REGS 8
-#define MAX_RAM 0xFFFF
+#define MAX_MEM 0xFFFF
 #define NUM_IO 0xFF
 
 
+// This might be useful to outside users (specifically the test suite)
 extern int opcode_size[NUM_OPCODES];
 
 
@@ -25,7 +26,7 @@ typedef enum {
     STAX,
     // And so on...
 
-    RST = 0xFF
+    HLT = 0x76
 } OPCODES;
 
 
@@ -38,11 +39,15 @@ typedef enum {
     H,
     L,
     A,      // Accumulator
-    FLAGS   // Status Flags
+    FLAGS   // 5-Bit Status Flags
 } REGISTERS;
 
 
-// Maps each status flag "mnemonic" to it's corresponding bit number
+/* Maps each status flag "mnemonic" to it's corresponding bit number.
+ * These mnemonics are lifted from the manual itself.
+ * There doesn't appear to be a specific bit mapping of flags so I think
+ * it's just left up to us.
+ */
 typedef enum {
     CY, // Carry Bit
     AC, // Aux Carry Bit
@@ -58,9 +63,11 @@ typedef struct CPU {
     uint16_t sp; // Stack pointer register
     uint8_t reg[NUM_REGS]; // 8-bit registers
 
-    uint8_t ram[MAX_RAM]; // Memory, including data and code
+    uint8_t memory[MAX_MEM]; // Memory, including data and code
 
-    // Memory-mapped IO
+    /* Memory-mapped IO (subject to change, might be better to just use the
+     * existing memory array).
+     */
     uint8_t input[NUM_IO];
     uint8_t output[NUM_IO];
 
@@ -69,8 +76,8 @@ typedef struct CPU {
 } CPU;
 
 
-// Resets the cpu including memory and registers
-void cpu_reset(CPU *cpu);
+// Initialize the CPU
+void cpu_init(CPU *cpu);
 
 // Loads a ROM file into memory
 bool cpu_load_rom(CPU *cpu, const char *filename);
