@@ -43,17 +43,17 @@ typedef enum {
 } REGISTERS;
 
 
-/* Maps each status flag "mnemonic" to it's corresponding bit number.
+/* Maps each status flag "mnemonic" to it's corresponding bit.
  * These mnemonics are lifted from the manual itself.
  * There doesn't appear to be a specific bit mapping of flags so I think
  * it's just left up to us.
  */
 typedef enum {
-    CY, // Carry Bit
-    AC, // Aux Carry Bit
-    S,  // Sign Bit
-    Z,  // Zero Bit
-    P   // Parity Bit
+    CY = 1,       // Carry Bit
+    AC = 1 << 1,  // Aux Carry Bit
+    S =  1 << 2,  // Sign Bit
+    Z =  1 << 3,  // Zero Bit
+    P =  1 << 4   // Parity Bit
 } FLAG_BITS;
 
 

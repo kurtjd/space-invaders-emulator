@@ -52,6 +52,20 @@ static void _cpu_reset(CPU *cpu) {
     }
 }
 
+/* Retrieves the specified flag bit. */
+static bool _get_flag_bit(const CPU *cpu, FLAG_BITS flag) {
+    return cpu->reg[FLAGS] & flag;
+}
+
+/* Sets the specified flag bit. */
+static void _set_flag_bit(CPU *cpu, FLAG_BITS flag, bool high) {
+    if (high) {
+        cpu->reg[FLAGS] |= flag;
+    } else {
+        cpu->reg[FLAGS] &= ~flag;
+    }
+}
+
 
 /*** PUBLIC FUNCTIONS ***/
 void cpu_init(CPU *cpu) {
