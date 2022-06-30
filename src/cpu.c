@@ -78,31 +78,6 @@ static void _init_opcode_size(void) {
 }
 
 
-/* Retrieves the specified flag bit. */
-static bool _get_flag_bit(const CPU *cpu, FLAG_BITS flag) {
-    return cpu->reg[FLAGS] & flag;
-}
-
-/* Sets the specified flag bit. */
-static void _set_flag_bit(CPU *cpu, FLAG_BITS flag, bool high) {
-    if (high) {
-        cpu->reg[FLAGS] |= flag;
-    } else {
-        cpu->reg[FLAGS] &= ~flag;
-    }
-}
-
-/* Returns a uint16_t with reg1 as the MSB and reg2 as the LSB. */
-static uint16_t _get_reg_pair(const CPU *cpu, REGISTERS reg1, REGISTERS reg2) {
-    return (cpu->reg[reg1] << 8) | cpu->reg[reg2];
-}
-
-/* Given a uint16_t, places the MSB in reg1 and the LSB in reg2. */
-static void _set_reg_pair(CPU *cpu, REGISTERS reg1, REGISTERS reg2, uint16_t val) {
-    cpu->reg[reg1] = val >> 8;
-    cpu->reg[reg2] = val & 0xFF;
-}
-
 /*** PUBLIC FUNCTIONS ***/
 void cpu_init(CPU *cpu) {
     _init_opcode_size();
@@ -121,7 +96,7 @@ void cpu_reset(CPU *cpu) {
         cpu->reg[i] = 0;
     }
 
-    // Clear memory (probably not necessary really)
+    // Clear memory (mainly useful for tests)
     for (int i = 0; i < MAX_MEM; i++) {
         cpu->memory[i] = 0;
     }
@@ -140,6 +115,27 @@ bool cpu_load_rom(CPU *cpu, const char *filename) {
     }
 
     return false;
+}
+
+bool cpu_get_flag_bit(const CPU *cpu, FLAG_BITS flag) {
+    return cpu->reg[FLAGS] & flag;
+}
+
+void cpu_set_flag_bit(CPU *cpu, FLAG_BITS flag, bool high) {
+    if (high) {
+        cpu->reg[FLAGS] |= flag;
+    } else {
+        cpu->reg[FLAGS] &= ~flag;
+    }
+}
+
+uint16_t cpu_get_reg_pair(const CPU *cpu, REGISTERS reg1, REGISTERS reg2) {
+    return (cpu->reg[reg1] << 8) | cpu->reg[reg2];
+}
+
+void cpu_set_reg_pair(CPU *cpu, REGISTERS reg1, REGISTERS reg2, uint16_t val) {
+    cpu->reg[reg1] = val >> 8;
+    cpu->reg[reg2] = val & 0xFF;
 }
 
 void cpu_tick(CPU *cpu) {
@@ -167,169 +163,7 @@ void cpu_tick(CPU *cpu) {
      */
     switch (opcode) {
     /* Data Transfer Group */
-    case MOV_B_B:
-        // Do stuff
-        break;
-    case MOV_B_C:
-        // Do stuff
-        break;
-    case MOV_B_D:
-        // Do stuff
-        break;
-    case MOV_B_E:
-        // Do stuff
-        break;
-    case MOV_B_H:
-        // Do stuff
-        break;
-    case MOV_B_L:
-        // Do stuff
-        break;
-    case MOV_B_M:
-        // Do stuff
-        break;
-    case MOV_B_A:
-        // Do stuff
-        break;
-    case MOV_C_B:
-        // Do stuff
-        break;
-    case MOV_C_C:
-        // Do stuff
-        break;
-    case MOV_C_D:
-        // Do stuff
-        break;
-    case MOV_C_E:
-        // Do stuff
-        break;
-    case MOV_C_H:
-        // Do stuff
-        break;
-    case MOV_C_L:
-        // Do stuff
-        break;
-    case MOV_C_M:
-        // Do stuff
-        break;
-    case MOV_C_A:
-        // Do stuff
-        break;
-    case MOV_D_B:
-        // Do stuff
-        break;
-    case MOV_D_C:
-        // Do stuff
-        break;
-    case MOV_D_D:
-        // Do stuff
-        break;
-    case MOV_D_E:
-        // Do stuff
-        break;
-    case MOV_D_H:
-        // Do stuff
-        break;
-    case MOV_D_L:
-        // Do stuff
-        break;
-    case MOV_D_M:
-        // Do stuff
-        break;
-    case MOV_D_A:
-        // Do stuff
-        break;
-    case MOV_E_B:
-        // Do stuff
-        break;
-    case MOV_E_C:
-        // Do stuff
-        break;
-    case MOV_E_D:
-        // Do stuff
-        break;
-    case MOV_E_E:
-        // Do stuff
-        break;
-    case MOV_E_H:
-        // Do stuff
-        break;
-    case MOV_E_L:
-        // Do stuff
-        break;
-    case MOV_E_M:
-        // Do stuff
-        break;
-    case MOV_E_A:
-        // Do stuff
-        break;
-    case MOV_H_B:
-        // Do stuff
-        break;
-    case MOV_H_C:
-        // Do stuff
-        break;
-    case MOV_H_D:
-        // Do stuff
-        break;
-    case MOV_H_E:
-        // Do stuff
-        break;
-    case MOV_H_H:
-        // Do stuff
-        break;
-    case MOV_H_L:
-        // Do stuff
-        break;
-    case MOV_H_M:
-        // Do stuff
-        break;
-    case MOV_H_A:
-        // Do stuff
-        break;
-    case MOV_L_B:
-        // Do stuff
-        break;
-    case MOV_L_C:
-        // Do stuff
-        break;
-    case MOV_L_D:
-        // Do stuff
-        break;
-    case MOV_L_E:
-        // Do stuff
-        break;
-    case MOV_L_H:
-        // Do stuff
-        break;
-    case MOV_L_L:
-        // Do stuff
-        break;
-    case MOV_L_M:
-        // Do stuff
-        break;
-    case MOV_L_A:
-        // Do stuff
-        break;
-    case MOV_M_B:
-        // Do stuff
-        break;
-    case MOV_M_C:
-        // Do stuff
-        break;
-    case MOV_M_D:
-        // Do stuff
-        break;
-    case MOV_M_E:
-        // Do stuff
-        break;
-    case MOV_M_H:
-        // Do stuff
-        break;
-    case MOV_M_L:
-        // Do stuff
-        break;
-    case MOV_M_A:
+    case MOV_A_A:
         // Do stuff
         break;
     case MOV_A_B:
@@ -353,7 +187,169 @@ void cpu_tick(CPU *cpu) {
     case MOV_A_M:
         // Do stuff
         break;
-    case MOV_A_A:
+    case MOV_B_A:
+        // Do stuff
+        break;
+    case MOV_B_B:
+        // Do stuff
+        break;
+    case MOV_B_C:
+        // Do stuff
+        break;
+    case MOV_B_D:
+        // Do stuff
+        break;
+    case MOV_B_E:
+        // Do stuff
+        break;
+    case MOV_B_H:
+        // Do stuff
+        break;
+    case MOV_B_L:
+        // Do stuff
+        break;
+    case MOV_B_M:
+        // Do stuff
+        break;
+    case MOV_C_A:
+        // Do stuff
+        break;
+    case MOV_C_B:
+        // Do stuff
+        break;
+    case MOV_C_C:
+        // Do stuff
+        break;
+    case MOV_C_D:
+        // Do stuff
+        break;
+    case MOV_C_E:
+        // Do stuff
+        break;
+    case MOV_C_H:
+        // Do stuff
+        break;
+    case MOV_C_L:
+        // Do stuff
+        break;
+    case MOV_C_M:
+        // Do stuff
+        break;
+    case MOV_D_A:
+        // Do stuff
+        break;
+    case MOV_D_B:
+        // Do stuff
+        break;
+    case MOV_D_C:
+        // Do stuff
+        break;
+    case MOV_D_D:
+        // Do stuff
+        break;
+    case MOV_D_E:
+        // Do stuff
+        break;
+    case MOV_D_H:
+        // Do stuff
+        break;
+    case MOV_D_L:
+        // Do stuff
+        break;
+    case MOV_D_M:
+        // Do stuff
+        break;
+    case MOV_E_A:
+        // Do stuff
+        break;
+    case MOV_E_B:
+        // Do stuff
+        break;
+    case MOV_E_C:
+        // Do stuff
+        break;
+    case MOV_E_D:
+        // Do stuff
+        break;
+    case MOV_E_E:
+        // Do stuff
+        break;
+    case MOV_E_H:
+        // Do stuff
+        break;
+    case MOV_E_L:
+        // Do stuff
+        break;
+    case MOV_E_M:
+        // Do stuff
+        break;
+    case MOV_H_A:
+        // Do stuff
+        break;
+    case MOV_H_B:
+        // Do stuff
+        break;
+    case MOV_H_C:
+        // Do stuff
+        break;
+    case MOV_H_D:
+        // Do stuff
+        break;
+    case MOV_H_E:
+        // Do stuff
+        break;
+    case MOV_H_H:
+        // Do stuff
+        break;
+    case MOV_H_L:
+        // Do stuff
+        break;
+    case MOV_H_M:
+        // Do stuff
+        break;
+    case MOV_L_A:
+        // Do stuff
+        break;
+    case MOV_L_B:
+        // Do stuff
+        break;
+    case MOV_L_C:
+        // Do stuff
+        break;
+    case MOV_L_D:
+        // Do stuff
+        break;
+    case MOV_L_E:
+        // Do stuff
+        break;
+    case MOV_L_H:
+        // Do stuff
+        break;
+    case MOV_L_L:
+        // Do stuff
+        break;
+    case MOV_L_M:
+        // Do stuff
+        break;
+    case MOV_M_A:
+        // Do stuff
+        break;
+    case MOV_M_B:
+        // Do stuff
+        break;
+    case MOV_M_C:
+        // Do stuff
+        break;
+    case MOV_M_D:
+        // Do stuff
+        break;
+    case MOV_M_E:
+        // Do stuff
+        break;
+    case MOV_M_H:
+        // Do stuff
+        break;
+    case MOV_M_L:
         // Do stuff
         break;
     case MVI_A:

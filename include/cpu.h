@@ -335,6 +335,18 @@ void cpu_reset(CPU *cpu);
 // Loads a ROM file into memory
 bool cpu_load_rom(CPU *cpu, const char *filename);
 
+// Retrieves the specified flag bit
+bool cpu_get_flag_bit(const CPU *cpu, FLAG_BITS flag);
+
+// Sets the specified flag bit
+void cpu_set_flag_bit(CPU *cpu, FLAG_BITS flag, bool high);
+
+// Returns a uint16_t with reg1 as the MSB and reg2 as the LSB
+uint16_t cpu_get_reg_pair(const CPU *cpu, REGISTERS reg1, REGISTERS reg2);
+
+// Given a uint16_t, places the MSB in reg1 and the LSB in reg2
+void cpu_set_reg_pair(CPU *cpu, REGISTERS reg1, REGISTERS reg2, uint16_t val);
+
 // Executes the next instruction
 void cpu_tick(CPU *cpu);
 
