@@ -46,3 +46,17 @@ C3 D4 18
 -However when using register pairs, they seem to follow big-endian format 
 according to the manual, so in register pair BC, for example, C would contain 
 the least-significant byte and B the most-significant
+
+-Often you will see register 'M'. This is really just the memory byte pointed 
+to by the register pair HL.
+
+-There are a few different addressing 'modes':
+
+Direct: The bytes represent the actual address (byte 1 = LSB, byte 2 = MSB)
+Register: The bytes represent a register pair which contains the data
+Register Indirect: The bytes represent a register pair which contains an address 
+to the data
+Immediate: The instruction contains the address itself
+
+It is important when implementing instructions to double-check which 'mode' they 
+operate in.
