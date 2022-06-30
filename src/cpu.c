@@ -66,6 +66,16 @@ static void _set_flag_bit(CPU *cpu, FLAG_BITS flag, bool high) {
     }
 }
 
+/* Returns a uint16_t with reg1 as the MSB and reg2 as the LSB. */
+static uint16_t _get_reg_pair(const CPU *cpu, REGISTERS reg1, REGISTERS reg2) {
+    return (cpu->reg[reg1] << 8) | cpu->reg[reg2];
+}
+
+/* Given a uint16_t, places the MSB in reg1 and the LSB in reg2. */
+static void _set_reg_pair(CPU *cpu, REGISTERS reg1, REGISTERS reg2, uint16_t val) {
+    cpu->reg[reg1] = val >> 8;
+    cpu->reg[reg2] = val & 0xFF;
+}
 
 /*** PUBLIC FUNCTIONS ***/
 void cpu_init(CPU *cpu) {

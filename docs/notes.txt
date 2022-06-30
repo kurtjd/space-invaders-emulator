@@ -32,3 +32,17 @@ while we're just working on emulating the 8080 instruction set.
 -For testing/debugging purposes I'm also considering having ROM execution 
 output a logfile containing the current position of PC, opcode being executed, 
 and state of registers after each tick.
+
+-Intel 8080 uses little-endian architecture so any hex that represents a 16-bit 
+value in the ROM (for example an address) will appear in the ROM in little-
+endian format. For example:
+
+JMP $18D4
+
+appears in the ROM as:
+
+C3 D4 18
+
+-However when using register pairs, they seem to follow big-endian format 
+according to the manual, so in register pair BC, for example, C would contain 
+the least-significant byte and B the most-significant
