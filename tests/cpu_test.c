@@ -263,7 +263,7 @@ int main(void) {
     test_MOV_M_R(MOV_M_A, A);
     test_MOV_M_R(MOV_M_B, B);
     test_MOV_M_R(MOV_M_C, C);
-    test_MOV_M_R(MOV_M_C, D);
+    test_MOV_M_R(MOV_M_D, D);
     test_MOV_M_R(MOV_M_E, E);
     test_MOV_M_H();
     test_MOV_M_L();
