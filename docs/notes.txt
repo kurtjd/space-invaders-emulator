@@ -60,3 +60,8 @@ Immediate: The instruction contains the address itself
 
 It is important when implementing instructions to double-check which 'mode' they 
 operate in.
+
+-It might be worthwhile/fun to implement cycle-accurate instructions. Since 
+some (most) instructions take more than 1 clock cycle to complete and the 8080 
+runs at roughly 2MHz, we'd need to take that into account if we want as accurate 
+timing/speed as possible.

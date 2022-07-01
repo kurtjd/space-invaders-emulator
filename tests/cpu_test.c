@@ -816,6 +816,7 @@ int main(void) {
     test_LDAX_D();
     test_STAX_B();
     test_STAX_D();
+    test_XCHG();
 
     /* Arithmetic Tests */
 

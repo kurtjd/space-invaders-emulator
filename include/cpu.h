@@ -11,10 +11,6 @@
 #define NUM_IO 0xFF
 
 
-// This might be useful to outside users (specifically the test suite)
-extern int opcode_size[NUM_OPCODES];
-
-
 /* This enum associates each mnemonic with it's actual binary opcode.
  * Could just be helpful for making switch more readable.
  * For example NOP appears to be 0x00, LXI_B 0x01, STAX_B 0x02, etc.
