@@ -1,524 +1,62 @@
-#undef NDEBUG
+#include <stdlib.h>
 #include <stdio.h>
-#include <assert.h>
 #include "cpu.h"
+
+#define TEST(opcode, condition) \
+{ \
+    if (!(condition)) { \
+        fprintf(stderr, "%s: Test `"#condition"` failed on line %d.\n", \
+                opcode_str[opcode], __LINE__); \
+        exit(1); \
+    } \
+}
 
 // Making this global just keeps down on clutter
 CPU cpu;
 
-// Resets the CPU and loads the opcode into beginning of memory
+/* Resets the CPU and loads the opcode into beginning of memory. */
 void setup_test(OPCODES opcode) {
     cpu_reset(&cpu);
     cpu.memory[0] = opcode;
 }
 
-void test_MOV_A_A(void) {
-    setup_test(MOV_A_A);
-    cpu.reg[A] = 0x42;
+/* Test for a register-to-register move. */
+void test_MOV_R_R(OPCODES opcode, REGISTERS dest, REGISTERS src) {
+    setup_test(opcode);
+    cpu.reg[src] = 0x42;
     cpu_tick(&cpu);
 
-    assert(cpu.reg[A] == 0x42);
+    TEST(opcode, cpu.reg[dest] == 0x42);
 }
 
-void test_MOV_A_B(void) {
-    setup_test(MOV_A_B);
-    cpu.reg[B] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[A] == 0x42);
-}
-
-void test_MOV_A_C(void) {
-    setup_test(MOV_A_C);
-    cpu.reg[C] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[A] == 0x42);
-}
-
-void test_MOV_A_D(void) {
-    setup_test(MOV_A_D);
-    cpu.reg[D] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[A] == 0x42);
-}
-
-void test_MOV_A_E(void) {
-    setup_test(MOV_A_E);
-    cpu.reg[E] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[A] == 0x42);
-}
-
-void test_MOV_A_H(void) {
-    setup_test(MOV_A_H);
-    cpu.reg[H] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[A] == 0x42);
-}
-
-void test_MOV_A_L(void) {
-    setup_test(MOV_A_L);
-    cpu.reg[L] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[A] == 0x42);
-}
-
-void test_MOV_A_M(void) {
-    setup_test(MOV_A_M);
+/* Test for a memory-to-register move. */
+void test_MOV_R_M(OPCODES opcode, REGISTERS dest) {
+    setup_test(opcode);
     cpu.memory[0xDEAD] = 0x42;
     cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
     cpu_tick(&cpu);
 
-    assert(cpu.reg[A] == 0x42);
+    TEST(opcode, cpu.reg[dest] == 0x42);
 }
 
-void test_MOV_B_A(void) {
-    setup_test(MOV_B_A);
-    cpu.reg[A] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[B] == 0x42);
-}
-
-void test_MOV_B_B(void) {
-    setup_test(MOV_B_B);
-    cpu.reg[B] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[B] == 0x42);
-}
-
-void test_MOV_B_C(void) {
-    setup_test(MOV_B_C);
-    cpu.reg[C] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[B] == 0x42);
-}
-
-void test_MOV_B_D(void) {
-    setup_test(MOV_B_D);
-    cpu.reg[D] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[B] == 0x42);
-}
-
-void test_MOV_B_E(void) {
-    setup_test(MOV_B_E);
-    cpu.reg[E] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[B] == 0x42);
-}
-
-void test_MOV_B_H(void) {
-    setup_test(MOV_B_H);
-    cpu.reg[H] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[B] == 0x42);
-}
-
-void test_MOV_B_L(void) {
-    setup_test(MOV_B_L);
-    cpu.reg[L] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[B] == 0x42);
-}
-
-void test_MOV_B_M(void) {
-    setup_test(MOV_B_M);
-    cpu.memory[0xDEAD] = 0x42;
+/* Test for a register-to-memory move. */
+void test_MOV_M_R(OPCODES opcode, REGISTERS src) {
+    setup_test(opcode);
+    cpu.reg[src] = 0x42;
     cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
     cpu_tick(&cpu);
 
-    assert(cpu.reg[B] == 0x42);
+    TEST(opcode, cpu.memory[0xDEAD] == 0x42);
 }
 
-void test_MOV_C_A(void) {
-    setup_test(MOV_C_A);
-    cpu.reg[A] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[C] == 0x42);
-}
-
-void test_MOV_C_B(void) {
-    setup_test(MOV_C_B);
-    cpu.reg[B] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[C] == 0x42);
-}
-
-void test_MOV_C_C(void) {
-    setup_test(MOV_C_C);
-    cpu.reg[C] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[C] == 0x42);
-}
-
-void test_MOV_C_D(void) {
-    setup_test(MOV_C_D);
-    cpu.reg[D] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[C] == 0x42);
-}
-
-void test_MOV_C_E(void) {
-    setup_test(MOV_C_E);
-    cpu.reg[E] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[C] == 0x42);
-}
-
-void test_MOV_C_H(void) {
-    setup_test(MOV_C_H);
-    cpu.reg[H] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[C] == 0x42);
-}
-
-void test_MOV_C_L(void) {
-    setup_test(MOV_C_L);
-    cpu.reg[L] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[C] == 0x42);
-}
-
-void test_MOV_C_M(void) {
-    setup_test(MOV_C_M);
-    cpu.memory[0xDEAD] = 0x42;
-    cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[C] == 0x42);
-}
-
-void test_MOV_D_A(void) {
-    setup_test(MOV_D_A);
-    cpu.reg[A] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[D] == 0x42);
-}
-
-void test_MOV_D_B(void) {
-    setup_test(MOV_D_B);
-    cpu.reg[B] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[D] == 0x42);
-}
-
-void test_MOV_D_C(void) {
-    setup_test(MOV_D_C);
-    cpu.reg[C] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[D] == 0x42);
-}
-
-void test_MOV_D_D(void) {
-    setup_test(MOV_D_D);
-    cpu.reg[D] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[D] == 0x42);
-}
-
-void test_MOV_D_E(void) {
-    setup_test(MOV_D_E);
-    cpu.reg[E] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[D] == 0x42);
-}
-
-void test_MOV_D_H(void) {
-    setup_test(MOV_D_H);
-    cpu.reg[H] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[D] == 0x42);
-}
-
-void test_MOV_D_L(void) {
-    setup_test(MOV_D_L);
-    cpu.reg[L] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[D] == 0x42);
-}
-
-void test_MOV_D_M(void) {
-    setup_test(MOV_D_M);
-    cpu.memory[0xDEAD] = 0x42;
-    cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[D] == 0x42);
-}
-
-void test_MOV_E_A(void) {
-    setup_test(MOV_E_A);
-    cpu.reg[A] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[E] == 0x42);
-}
-
-void test_MOV_E_B(void) {
-    setup_test(MOV_E_B);
-    cpu.reg[B] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[E] == 0x42);
-}
-
-void test_MOV_E_C(void) {
-    setup_test(MOV_E_C);
-    cpu.reg[C] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[E] == 0x42);
-}
-
-void test_MOV_E_D(void) {
-    setup_test(MOV_E_D);
-    cpu.reg[D] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[E] == 0x42);
-}
-
-void test_MOV_E_E(void) {
-    setup_test(MOV_E_E);
-    cpu.reg[E] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[E] == 0x42);
-}
-
-void test_MOV_E_H(void) {
-    setup_test(MOV_E_H);
-    cpu.reg[H] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[E] == 0x42);
-}
-
-void test_MOV_E_L(void) {
-    setup_test(MOV_E_L);
-    cpu.reg[L] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[E] == 0x42);
-}
-
-void test_MOV_E_M(void) {
-    setup_test(MOV_E_M);
-    cpu.memory[0xDEAD] = 0x42;
-    cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[E] == 0x42);
-}
-
-void test_MOV_H_A(void) {
-    setup_test(MOV_H_A);
-    cpu.reg[A] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[H] == 0x42);
-}
-
-void test_MOV_H_B(void) {
-    setup_test(MOV_H_B);
-    cpu.reg[B] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[H] == 0x42);
-}
-
-void test_MOV_H_C(void) {
-    setup_test(MOV_H_C);
-    cpu.reg[C] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[H] == 0x42);
-}
-
-void test_MOV_H_D(void) {
-    setup_test(MOV_H_D);
-    cpu.reg[D] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[H] == 0x42);
-}
-
-void test_MOV_H_E(void) {
-    setup_test(MOV_H_E);
-    cpu.reg[E] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[H] == 0x42);
-}
-
-void test_MOV_H_H(void) {
-    setup_test(MOV_H_H);
-    cpu.reg[H] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[H] == 0x42);
-}
-
-void test_MOV_H_L(void) {
-    setup_test(MOV_H_L);
-    cpu.reg[L] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[H] == 0x42);
-}
-
-void test_MOV_H_M(void) {
-    setup_test(MOV_H_M);
-    cpu.memory[0xDEAD] = 0x42;
-    cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[H] == 0x42);
-}
-
-void test_MOV_L_A(void) {
-    setup_test(MOV_L_A);
-    cpu.reg[A] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[L] == 0x42);
-}
-
-void test_MOV_L_B(void) {
-    setup_test(MOV_L_B);
-    cpu.reg[B] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[L] == 0x42);
-}
-
-void test_MOV_L_C(void) {
-    setup_test(MOV_L_C);
-    cpu.reg[C] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[L] == 0x42);
-}
-
-void test_MOV_L_D(void) {
-    setup_test(MOV_L_D);
-    cpu.reg[D] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[L] == 0x42);
-}
-
-void test_MOV_L_E(void) {
-    setup_test(MOV_L_E);
-    cpu.reg[E] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[L] == 0x42);
-}
-
-void test_MOV_L_H(void) {
-    setup_test(MOV_L_H);
-    cpu.reg[H] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[L] == 0x42);
-}
-
-void test_MOV_L_L(void) {
-    setup_test(MOV_L_L);
-    cpu.reg[L] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[L] == 0x42);
-}
-
-void test_MOV_L_M(void) {
-    setup_test(MOV_L_M);
-    cpu.memory[0xDEAD] = 0x42;
-    cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[L] == 0x42);
-}
-
-void test_MOV_M_A(void) {
-    setup_test(MOV_M_A);
-    cpu.reg[A] = 0x42;
-    cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
-    cpu_tick(&cpu);
-
-    assert(cpu.memory[0xDEAD] == 0x42);
-}
-
-void test_MOV_M_B(void) {
-    setup_test(MOV_M_B);
-    cpu.reg[B] = 0x42;
-    cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
-    cpu_tick(&cpu);
-
-    assert(cpu.memory[0xDEAD] == 0x42);
-}
-
-void test_MOV_M_C(void) {
-    setup_test(MOV_M_C);
-    cpu.reg[C] = 0x42;
-    cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
-    cpu_tick(&cpu);
-
-    assert(cpu.memory[0xDEAD] == 0x42);
-}
-
-void test_MOV_M_D(void) {
-    setup_test(MOV_M_D);
-    cpu.reg[D] = 0x42;
-    cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
-    cpu_tick(&cpu);
-
-    assert(cpu.memory[0xDEAD] == 0x42);
-}
-
-void test_MOV_M_E(void) {
-    setup_test(MOV_M_E);
-    cpu.reg[E] = 0x42;
-    cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
-    cpu_tick(&cpu);
-
-    assert(cpu.memory[0xDEAD] == 0x42);
-}
-
+/* MOV M, H and MOV M, L might be special cases so give their own tests. */
 void test_MOV_M_H(void) {
     setup_test(MOV_M_H);
     cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
     cpu_tick(&cpu);
 
     // Strange opcode...
-    assert(cpu.memory[0xDEAD] == 0xDE);
+    TEST(MOV_M_H, cpu.memory[0xDEAD] == 0xDE);
 }
 
 void test_MOV_M_L(void) {
@@ -527,110 +65,49 @@ void test_MOV_M_L(void) {
     cpu_tick(&cpu);
 
     // Also strange opcode...
-    assert(cpu.memory[0xDEAD] == 0xAD);
+    TEST(MOV_M_L, cpu.memory[0xDEAD] == 0xAD);
 }
 
-void test_MVI_A(void) {
-    setup_test(MVI_A);
+/* Test for an immediate-to-register move. */
+void test_MVI_R(OPCODES opcode, REGISTERS dest) {
+    setup_test(opcode);
     cpu.memory[1] = 0x42;
     cpu_tick(&cpu);
 
-    assert(cpu.reg[A] == 0x42);
+    TEST(opcode, cpu.reg[dest] == 0x42);
 }
 
-void test_MVI_B(void) {
-    setup_test(MVI_B);
-    cpu.memory[1] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[B] == 0x42);
-}
-
-void test_MVI_C(void) {
-    setup_test(MVI_C);
-    cpu.memory[1] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[C] == 0x42);
-}
-
-void test_MVI_D(void) {
-    setup_test(MVI_D);
-    cpu.memory[1] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[D] == 0x42);
-}
-
-void test_MVI_E(void) {
-    setup_test(MVI_E);
-    cpu.memory[1] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[E] == 0x42);
-}
-
-void test_MVI_H(void) {
-    setup_test(MVI_H);
-    cpu.memory[1] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[H] == 0x42);
-}
-
-void test_MVI_L(void) {
-    setup_test(MVI_L);
-    cpu.memory[1] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[L] == 0x42);
-}
-
+/* Test for an immediate-to-memory move. */
 void test_MVI_M(void) {
     setup_test(MVI_M);
     cpu.memory[1] = 0x42;
     cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
     cpu_tick(&cpu);
 
-    assert(cpu.memory[cpu_get_reg_pair(&cpu, H, L)] == 0x42);
+    TEST(MVI_M, cpu.memory[cpu_get_reg_pair(&cpu, H, L)] == 0x42);
 }
 
-void test_LXI_B(void) {
-    setup_test(LXI_B);
+/* Test for immediate-to-register pair load. */
+void test_LXI_RP(OPCODES opcode, REGISTERS r1, REGISTERS r2) {
+    setup_test(opcode);
     cpu.memory[1] = 0xAD;
     cpu.memory[2] = 0xDE;
     cpu_tick(&cpu);
 
-    assert(cpu_get_reg_pair(&cpu, B, C) == 0xDEAD);
+    TEST(opcode, cpu_get_reg_pair(&cpu, r1, r2) == 0xDEAD);
 }
 
-void test_LXI_D(void) {
-    setup_test(LXI_D);
-    cpu.memory[1] = 0xAD;
-    cpu.memory[2] = 0xDE;
-    cpu_tick(&cpu);
-
-    assert(cpu_get_reg_pair(&cpu, D, E) == 0xDEAD);
-}
-
-void test_LXI_H(void) {
-    setup_test(LXI_H);
-    cpu.memory[1] = 0xAD;
-    cpu.memory[2] = 0xDE;
-    cpu_tick(&cpu);
-
-    assert(cpu_get_reg_pair(&cpu, H, L) == 0xDEAD);
-}
-
+/* Test for immediate-to-stack pointer load. */
 void test_LXI_SP(void) {
     setup_test(LXI_SP);
     cpu.memory[1] = 0xAD;
     cpu.memory[2] = 0xDE;
     cpu_tick(&cpu);
 
-    assert(cpu.sp == 0xDEAD);
+    TEST(LXI_SP, cpu.sp == 0xDEAD);
 }
 
+/* Test for memory-to-accumulator load. */
 void test_LDA(void) {
     setup_test(LDA);
     cpu.memory[1] = 0xAD;
@@ -638,9 +115,10 @@ void test_LDA(void) {
     cpu.memory[0xDEAD] = 0x42;
     cpu_tick(&cpu);
 
-    assert(cpu.reg[A] == 0x42);
+    TEST(LDA, cpu.reg[A] == 0x42);
 }
 
+/* Test for accumulator-to-memory move. */
 void test_STA(void) {
     setup_test(STA);
     cpu.memory[1] = 0xAD;
@@ -648,9 +126,10 @@ void test_STA(void) {
     cpu.reg[A] = 0x42;
     cpu_tick(&cpu);
 
-    assert(cpu.memory[0xDEAD] == 0x42);
+    TEST(STA, cpu.memory[0xDEAD] == 0x42);
 }
 
+/* Test for memory-to-(HL) load. */
 void test_LHLD(void) {
     setup_test(LHLD);
     cpu.memory[1] = 0xAD;
@@ -659,10 +138,11 @@ void test_LHLD(void) {
     cpu.memory[0xDEAE] = 0x69;
     cpu_tick(&cpu);
 
-    assert(cpu.reg[L] == 0x42);
-    assert(cpu.reg[H] == 0x69);
+    TEST(LHLD, cpu.reg[L] == 0x42);
+    TEST(LHLD, cpu.reg[H] == 0x69);
 }
 
+/* Test for (HL)-to-memory move. */
 void test_SHLD(void) {
     setup_test(SHLD);
     cpu.memory[1] = 0xAD;
@@ -671,50 +151,33 @@ void test_SHLD(void) {
     cpu.reg[H] = 0x69;
     cpu_tick(&cpu);
 
-    assert(cpu.memory[0xDEAD] == 0x42);
-    assert(cpu.memory[0xDEAE] == 0x69);
+    TEST(SHLD, cpu.memory[0xDEAD] == 0x42);
+    TEST(SHLD, cpu.memory[0xDEAE] == 0x69);
 }
 
-void test_LDAX_B(void) {
-    setup_test(LDAX_B);
-    cpu.reg[B] = 0xDE;
-    cpu.reg[C] = 0xAD;
+/* Test for memory-to-accumulator indirect load. */
+void test_LDAX_RP(OPCODES opcode, REGISTERS r1, REGISTERS r2) {
+    setup_test(opcode);
+    cpu.reg[r1] = 0xDE;
+    cpu.reg[r2] = 0xAD;
     cpu.memory[0xDEAD] = 0x42;
     cpu_tick(&cpu);
 
-    assert(cpu.reg[A] == 0x42);
+    TEST(opcode, cpu.reg[A] == 0x42);
 }
 
-void test_LDAX_D(void) {
-    setup_test(LDAX_D);
-    cpu.reg[D] = 0xDE;
-    cpu.reg[E] = 0xAD;
-    cpu.memory[0xDEAD] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.reg[A] == 0x42);
-}
-
-void test_STAX_B(void) {
-    setup_test(STAX_B);
-    cpu.reg[B] = 0xDE;
-    cpu.reg[C] = 0xAD;
+/* Test for accumulator-to-memory indirect move. */
+void test_STAX_RP(OPCODES opcode, REGISTERS r1, REGISTERS r2) {
+    setup_test(opcode);
+    cpu.reg[r1] = 0xDE;
+    cpu.reg[r2] = 0xAD;
     cpu.reg[A] = 0x42;
     cpu_tick(&cpu);
 
-    assert(cpu.memory[0xDEAD] == 0x42);
+    TEST(opcode, cpu.memory[0xDEAD] == 0x42);
 }
 
-void test_STAX_D(void) {
-    setup_test(STAX_D);
-    cpu.reg[D] = 0xDE;
-    cpu.reg[E] = 0xAD;
-    cpu.reg[A] = 0x42;
-    cpu_tick(&cpu);
-
-    assert(cpu.memory[0xDEAD] == 0x42);
-}
-
+/* Test for H <-> L and D <-> E exchange. */
 void test_XCHG(void) {
     setup_test(XCHG);
     cpu.reg[H] = 0xDE;
@@ -723,99 +186,113 @@ void test_XCHG(void) {
     cpu.reg[E] = 0xEF;
     cpu_tick(&cpu);
 
-    assert(cpu.reg[H] == 0xBE);
-    assert(cpu.reg[L] == 0xEF);
-    assert(cpu.reg[D] == 0xDE);
-    assert(cpu.reg[E] == 0xAD);
+    TEST(XCHG, cpu.reg[H] == 0xBE);
+    TEST(XCHG, cpu.reg[L] == 0xEF);
+    TEST(XCHG, cpu.reg[D] == 0xDE);
+    TEST(XCHG, cpu.reg[E] == 0xAD);
 }
 
 int main(void) {
     cpu_init(&cpu);
 
     /* Data Transfer Tests */
-    test_MOV_A_A();
-    test_MOV_A_B();
-    test_MOV_A_C();
-    test_MOV_A_D();
-    test_MOV_A_E();
-    test_MOV_A_H();
-    test_MOV_A_L();
-    test_MOV_A_M();
-    test_MOV_B_A();
-    test_MOV_B_B();
-    test_MOV_B_C();
-    test_MOV_B_D();
-    test_MOV_B_E();
-    test_MOV_B_H();
-    test_MOV_B_L();
-    test_MOV_B_M();
-    test_MOV_C_A();
-    test_MOV_C_B();
-    test_MOV_C_C();
-    test_MOV_C_D();
-    test_MOV_C_E();
-    test_MOV_C_H();
-    test_MOV_C_L();
-    test_MOV_C_M();
-    test_MOV_D_A();
-    test_MOV_D_B();
-    test_MOV_D_C();
-    test_MOV_D_D();
-    test_MOV_D_E();
-    test_MOV_D_H();
-    test_MOV_D_L();
-    test_MOV_D_M();
-    test_MOV_E_A();
-    test_MOV_E_B();
-    test_MOV_E_C();
-    test_MOV_E_D();
-    test_MOV_E_E();
-    test_MOV_E_H();
-    test_MOV_E_L();
-    test_MOV_E_M();
-    test_MOV_H_A();
-    test_MOV_H_B();
-    test_MOV_H_C();
-    test_MOV_H_D();
-    test_MOV_H_E();
-    test_MOV_H_H();
-    test_MOV_H_L();
-    test_MOV_H_M();
-    test_MOV_L_A();
-    test_MOV_L_B();
-    test_MOV_L_C();
-    test_MOV_L_D();
-    test_MOV_L_E();
-    test_MOV_L_H();
-    test_MOV_L_L();
-    test_MOV_L_M();
-    test_MOV_M_A();
-    test_MOV_M_B();
-    test_MOV_M_C();
-    test_MOV_M_D();
-    test_MOV_M_E();
+    test_MOV_R_R(MOV_A_A, A, A);
+    test_MOV_R_R(MOV_A_B, A, B);
+    test_MOV_R_R(MOV_A_C, A, C);
+    test_MOV_R_R(MOV_A_D, A, D);
+    test_MOV_R_R(MOV_A_E, A, E);
+    test_MOV_R_R(MOV_A_H, A, H);
+    test_MOV_R_R(MOV_A_L, A, L);
+
+    test_MOV_R_R(MOV_B_A, B, A);
+    test_MOV_R_R(MOV_B_B, B, B);
+    test_MOV_R_R(MOV_B_C, B, C);
+    test_MOV_R_R(MOV_B_D, B, D);
+    test_MOV_R_R(MOV_B_E, B, E);
+    test_MOV_R_R(MOV_B_H, B, H);
+    test_MOV_R_R(MOV_B_L, B, L);
+
+    test_MOV_R_R(MOV_C_A, C, A);
+    test_MOV_R_R(MOV_C_B, C, B);
+    test_MOV_R_R(MOV_C_C, C, C);
+    test_MOV_R_R(MOV_C_D, C, D);
+    test_MOV_R_R(MOV_C_E, C, E);
+    test_MOV_R_R(MOV_C_H, C, H);
+    test_MOV_R_R(MOV_C_L, C, L);
+
+    test_MOV_R_R(MOV_D_A, D, A);
+    test_MOV_R_R(MOV_D_B, D, B);
+    test_MOV_R_R(MOV_D_C, D, C);
+    test_MOV_R_R(MOV_D_D, D, D);
+    test_MOV_R_R(MOV_D_E, D, E);
+    test_MOV_R_R(MOV_D_H, D, H);
+    test_MOV_R_R(MOV_D_L, D, L);
+
+    test_MOV_R_R(MOV_E_A, E, A);
+    test_MOV_R_R(MOV_E_B, E, B);
+    test_MOV_R_R(MOV_E_C, E, C);
+    test_MOV_R_R(MOV_E_D, E, D);
+    test_MOV_R_R(MOV_E_E, E, E);
+    test_MOV_R_R(MOV_E_H, E, H);
+    test_MOV_R_R(MOV_E_L, E, L);
+
+    test_MOV_R_R(MOV_H_A, H, A);
+    test_MOV_R_R(MOV_H_B, H, B);
+    test_MOV_R_R(MOV_H_C, H, C);
+    test_MOV_R_R(MOV_H_D, H, D);
+    test_MOV_R_R(MOV_H_E, H, E);
+    test_MOV_R_R(MOV_H_H, H, H);
+    test_MOV_R_R(MOV_H_L, H, L);
+
+    test_MOV_R_R(MOV_L_A, L, A);
+    test_MOV_R_R(MOV_L_B, L, B);
+    test_MOV_R_R(MOV_L_C, L, C);
+    test_MOV_R_R(MOV_L_D, L, D);
+    test_MOV_R_R(MOV_L_E, L, E);
+    test_MOV_R_R(MOV_L_H, L, H);
+    test_MOV_R_R(MOV_L_L, L, L);
+
+    test_MOV_R_M(MOV_A_M, A);
+    test_MOV_R_M(MOV_B_M, B);
+    test_MOV_R_M(MOV_C_M, C);
+    test_MOV_R_M(MOV_D_M, D);
+    test_MOV_R_M(MOV_E_M, E);
+    test_MOV_R_M(MOV_H_M, H);
+    test_MOV_R_M(MOV_L_M, L);
+
+    test_MOV_M_R(MOV_M_A, A);
+    test_MOV_M_R(MOV_M_B, B);
+    test_MOV_M_R(MOV_M_C, C);
+    test_MOV_M_R(MOV_M_C, D);
+    test_MOV_M_R(MOV_M_E, E);
     test_MOV_M_H();
     test_MOV_M_L();
-    test_MVI_A();
-    test_MVI_B();
-    test_MVI_C();
-    test_MVI_D();
-    test_MVI_E();
-    test_MVI_H();
-    test_MVI_L();
+
+    test_MVI_R(MVI_A, A);
+    test_MVI_R(MVI_B, B);
+    test_MVI_R(MVI_C, C);
+    test_MVI_R(MVI_D, D);
+    test_MVI_R(MVI_E, E);
+    test_MVI_R(MVI_H, H);
+    test_MVI_R(MVI_L, L);
     test_MVI_M();
-    test_LXI_B();
-    test_LXI_D();
-    test_LXI_H();
+
+    test_LXI_RP(LXI_B, B, C);
+    test_LXI_RP(LXI_D, D, E);
+    test_LXI_RP(LXI_H, H, L);
     test_LXI_SP();
+
     test_LDA();
     test_STA();
     test_LHLD();
     test_SHLD();
-    test_LDAX_B();
-    test_LDAX_D();
-    test_STAX_B();
-    test_STAX_D();
+
+    test_LDAX_RP(LDAX_B, B, C);
+    test_LDAX_RP(LDAX_D, D, E);
+
+    test_STAX_RP(STAX_B, B, C);
+    test_STAX_RP(STAX_D, D, E);
+
     test_XCHG();
 
     /* Arithmetic Tests */
@@ -826,6 +303,6 @@ int main(void) {
 
     /* Stack/IO Tests */
 
-    // If we got here, an assert never failed.
+    // If we got here, a test never failed!
     printf("All tests passed!\n");
 }

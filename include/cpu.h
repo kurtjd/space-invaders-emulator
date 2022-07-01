@@ -5,10 +5,16 @@
 #include <stdbool.h>
 
 
-#define NUM_OPCODES 0xFF
+#define NUM_OPCODES 0x100
 #define NUM_REGS 8
-#define MAX_MEM 0xFFFF
+#define MAX_MEM 0x10000
 #define NUM_IO 0xFF
+
+
+/* This array maps opcodes to a string.
+ * Useful for tests and eventual disassembler.
+ */
+extern const char *opcode_str[NUM_OPCODES];
 
 
 /* This enum associates each mnemonic with it's actual binary opcode.
