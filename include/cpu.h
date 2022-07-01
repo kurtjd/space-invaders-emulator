@@ -16,6 +16,11 @@
  */
 extern const char *opcode_str[NUM_OPCODES];
 
+/* Maps each opcode to its size in bytes. Technically opcodes are 1 byte but
+ * they may expect 1-2 bytes as "operands".
+ */
+extern int opcode_size[NUM_OPCODES];
+
 
 /* This enum associates each mnemonic with it's actual binary opcode.
  * Could just be helpful for making switch more readable.

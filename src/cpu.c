@@ -260,9 +260,6 @@ const char *opcode_str[NUM_OPCODES] = {
     "RST 7"
 };
 
-/* Maps each opcode to its size in bytes. Technically opcodes are 1 byte but
- * they may expect 1-2 bytes as "operands".
- */
 int opcode_size[NUM_OPCODES];
 
 

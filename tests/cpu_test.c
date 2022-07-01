@@ -177,7 +177,7 @@ void test_STAX_RP(OPCODES opcode, REGISTERS r1, REGISTERS r2) {
     TEST(opcode, cpu.memory[0xDEAD] == 0x42);
 }
 
-/* Test for H <-> L and D <-> E exchange. */
+/* Test for H <-> D and L <-> E exchange. */
 void test_XCHG(void) {
     setup_test(XCHG);
     cpu.reg[H] = 0xDE;
@@ -190,6 +190,99 @@ void test_XCHG(void) {
     TEST(XCHG, cpu.reg[L] == 0xEF);
     TEST(XCHG, cpu.reg[D] == 0xDE);
     TEST(XCHG, cpu.reg[E] == 0xAD);
+}
+
+/* Test for add register to accumulator. */
+void test_ADD_R(OPCODES opcode, REGISTERS src) {
+    setup_test(opcode);
+    cpu.reg[src] = 0;
+    cpu_tick(&cpu);
+
+    /* Accumulator is init to 0, so by adding 0, the result will be 0 thus the 
+     * zero flag should be set.
+     */
+    TEST(opcode, cpu_get_flag_bit(&cpu, Z));
+
+    setup_test(opcode);
+    cpu.reg[src] = 3;
+    cpu_tick(&cpu);
+
+    // Also do a quick check to make sure A actually holds the sum
+    TEST(opcode, cpu.reg[A] == 3);
+
+    // 3 is 0b11, thus even number of 1 bits, so parity should be true
+    TEST(opcode, cpu_get_flag_bit(&cpu, P));
+
+    setup_test(opcode);
+    cpu.reg[src] = 0x10;
+    cpu_tick(&cpu);
+
+    // Since 0x10 is greater than 4 bits, aux carry should be set true
+    TEST(opcode, cpu_get_flag_bit(&cpu, AC));
+
+    setup_test(opcode);
+    cpu.reg[src] = 0x80;
+    cpu_tick(&cpu);
+
+    // Any value greater than 127 should set the MSB, or 'sign' bit, high
+    TEST(opcode, cpu_get_flag_bit(&cpu, S));
+
+    setup_test(opcode);
+    cpu.reg[A] = 0xFF;
+    cpu.reg[src] = 1;
+    cpu_tick(&cpu);
+
+    // Finally ensure that a sum greater than 0xFF causes CY to be set
+    TEST(opcode, cpu_get_flag_bit(&cpu, CY));
+}
+
+/* Test for add memory to accumulator. */
+void test_ADD_M(void) {
+    setup_test(ADD_M);
+    cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
+    cpu.memory[0xDEAD] = 0;
+    cpu_tick(&cpu);
+
+    /* Accumulator is init to 0, so by adding 0, the result will be 0 thus the 
+     * zero flag should be set.
+     */
+    TEST(ADD_M, cpu_get_flag_bit(&cpu, Z));
+
+    setup_test(ADD_M);
+    cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
+    cpu.memory[0xDEAD] = 3;
+    cpu_tick(&cpu);
+
+    // Also do a quick check to make sure A actually holds the sum
+    TEST(ADD_M, cpu.reg[A] == 3);
+
+    // 3 is 0b11, thus even number of 1 bits, so parity should be set high
+    TEST(ADD_M, cpu_get_flag_bit(&cpu, P));
+
+    setup_test(ADD_M);
+    cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
+    cpu.memory[0xDEAD] = 0x10;
+    cpu_tick(&cpu);
+
+    // Since 0x10 is greater than 4 bits, aux carry should be set high
+    TEST(ADD_M, cpu_get_flag_bit(&cpu, AC));
+
+    setup_test(ADD_M);
+    cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
+    cpu.memory[0xDEAD] = 0x80;
+    cpu_tick(&cpu);
+
+    // Any value greater than 127 should set the MSB, or 'sign' bit, high
+    TEST(ADD_M, cpu_get_flag_bit(&cpu, S));
+
+    setup_test(ADD_M);
+    cpu.reg[A] = 0xFF;
+    cpu_set_reg_pair(&cpu, H, L, 0xDEAD);
+    cpu.memory[0xDEAD] = 1;
+    cpu_tick(&cpu);
+
+    // Finally ensure that a sum greater than 0xFF causes CY to be set high
+    TEST(ADD_M, cpu_get_flag_bit(&cpu, CY));
 }
 
 int main(void) {
@@ -296,6 +389,14 @@ int main(void) {
     test_XCHG();
 
     /* Arithmetic Tests */
+    test_ADD_R(ADD_A, A);
+    test_ADD_R(ADD_B, B);
+    test_ADD_R(ADD_C, C);
+    test_ADD_R(ADD_D, D);
+    test_ADD_R(ADD_E, E);
+    test_ADD_R(ADD_H, H);
+    test_ADD_R(ADD_L, L);
+    test_ADD_M();
 
     /* Logical Tests */
 
