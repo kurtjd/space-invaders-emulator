@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "cpu.h"
+#include "opcodes.h"
 
 const char *opcode_str[NUM_OPCODES] = {
     "NOP",
@@ -264,16 +265,6 @@ int opcode_size[NUM_OPCODES];
 
 
 /*** PRIVATE FUNCTIONS ***/
-/* Perhaps put all 'private' functions (ya know, functions that the user of the
- * cpu struct don't need to know, like factored out opcode functions) here.
- * IE:
- * 
- * static void _NOP(void) {
- *     // do nothing!
- * }
- * 
- */
-
 /* Initializes the opcode_size array to make incrementing PC simple. */
 static void _init_opcode_size(void) {
     /* Since the majority of opcodes are only 1 byte, default initialize
@@ -331,88 +322,6 @@ static void _init_opcode_size(void) {
     opcode_size[CP]     = 3;
     opcode_size[JM]     = 3;
     opcode_size[CM]     = 3;
-}
-
-
-/* Unfortunately, unlike the other status flags, CY and AC are manipulated
- * slightly differently depending on what instruction calls them, hence why
- * there are a few variations here. Most add instructions should be able to call
- * the add variants (except DAD rp (add register pairs) since that works on
- * 16-bit operands) and most sub instructions should be able to call the sub
- * variants. Finally, most logical instructions should be able to just call the
- * clear variant (except the rotate instructions). However, there are several
- * exceptions to these rules so look closely at how each instruction manipulates
- * these flags.
- */
-
-/* Adds two values (plus the CY flag if wanted) and if the result is greater
- * than 8-bits than we know a carry out occurred.
- */
-static void _update_flag_cy_add(CPU *cpu, uint8_t val1, uint8_t val2, bool add_carry) {
-    int carry = add_carry ? cpu_get_flag_bit(cpu, CY) : 0;
-    cpu_set_flag_bit(cpu, CY, val1 + val2 + carry > 0xFF);
-}
-
-/* Adds the first four bits of two values (plus the CY flag if wanted) and
- * if the result is greater than 0xF we know a carry out of the first 4 bits
- * occurred.
- */
-static void _update_flag_ac_add(CPU *cpu, uint8_t val1, uint8_t val2, bool add_carry) {
-    int carry = add_carry ? cpu_get_flag_bit(cpu, CY) : 0;
-    cpu_set_flag_bit(cpu, AC, (val1 & 0xF) + (val2 & 0xF) + carry > 0xF);
-}
-
-/* Subtracts the second value from the first value by adding the two's
- * complement of the second value to the first (plus the CY flag if wanted) 
- * and if the result is greater than 0xFF we know a borrow out occurred.
- */
-static void _update_flag_cy_sub(CPU *cpu, uint8_t val1, uint8_t val2, bool sub_borrow) {
-    int borrow = sub_borrow ? cpu_get_flag_bit(cpu, CY) : 0;
-    cpu_set_flag_bit(cpu, CY, val1 + (~(val2 + borrow) + 1) > 0xFF);
-}
-
-/* Subtracts the first four bits of the second value from the first four bits
- * of the first value by adding the two's complement of the second value to the
- * first (plus the CY flag if wanted) and if the result is greater than 0xF we
- * know a borrow out from the first 4 bits occurred.
- */
-static void _update_flag_ac_sub(CPU *cpu, uint8_t val1, uint8_t val2, bool sub_borrow) {
-    int borrow = sub_borrow ? cpu_get_flag_bit(cpu, CY) : 0;
-    val1 &= 0xF;
-    val2 = ~((val2 & 0xF) + borrow) + 1;
-    cpu_set_flag_bit(cpu, AC, val1 + val2 > 0xF);
-}
-
-/* Simply sets the CY and AC flags low. */
-static void _clear_cy_ac(CPU *cpu) {
-    cpu_set_flag_bit(cpu, CY, false);
-    cpu_set_flag_bit(cpu, AC, false);
-}
-
-/* Fortunately it seems these flags are updated the same way throughout all
- * instructions so these should be safe to call from any instruction that
- * affects that flag.
- */
-
-/* Sets sign flag equal to value of most-significant bit (bit 7) of res. */
-static void _update_flag_s(CPU *cpu, uint8_t res) {
-    cpu_set_flag_bit(cpu, S, res & (1 << 7));
-}
-
-/* Sets zero flag equal to 1 if res == 0, otherwise set to 0.  */
-static void _update_flag_z(CPU *cpu, uint8_t res) {
-    cpu_set_flag_bit(cpu, Z, !res);
-}
-
-/* Sets parity flag to 1 if number of 1 bits in res is even, 0 otherwise. */
-static void _update_flag_p(CPU *cpu, uint8_t res) {
-    int high_bits = 0;
-    while (res) {
-        high_bits += res & 1;
-        res >>= 1;
-    }
-
-    cpu_set_flag_bit(cpu, P, !(high_bits % 2));
 }
 
 
@@ -501,195 +410,69 @@ void cpu_tick(CPU *cpu) {
      */
     switch (opcode) {
     /* Data Transfer Group */
-    case MOV_A_A:
-        // Do stuff
-        break;
-    case MOV_A_B:
-        // Do stuff
-        break;
-    case MOV_A_C:
-        // Do stuff
-        break;
-    case MOV_A_D:
-        // Do stuff
-        break;
-    case MOV_A_E:
-        // Do stuff
-        break;
-    case MOV_A_H:
-        // Do stuff
-        break;
-    case MOV_A_L:
-        // Do stuff
-        break;
-    case MOV_A_M:
-        // Do stuff
-        break;
-    case MOV_B_A:
-        // Do stuff
-        break;
-    case MOV_B_B:
-        // Do stuff
-        break;
-    case MOV_B_C:
-        // Do stuff
-        break;
-    case MOV_B_D:
-        // Do stuff
-        break;
-    case MOV_B_E:
-        // Do stuff
-        break;
-    case MOV_B_H:
-        // Do stuff
-        break;
-    case MOV_B_L:
-        // Do stuff
-        break;
-    case MOV_B_M:
-        // Do stuff
-        break;
-    case MOV_C_A:
-        // Do stuff
-        break;
-    case MOV_C_B:
-        // Do stuff
-        break;
-    case MOV_C_C:
-        // Do stuff
-        break;
-    case MOV_C_D:
-        // Do stuff
-        break;
-    case MOV_C_E:
-        // Do stuff
-        break;
-    case MOV_C_H:
-        // Do stuff
-        break;
-    case MOV_C_L:
-        // Do stuff
-        break;
-    case MOV_C_M:
-        // Do stuff
-        break;
-    case MOV_D_A:
-        // Do stuff
-        break;
-    case MOV_D_B:
-        // Do stuff
-        break;
-    case MOV_D_C:
-        // Do stuff
-        break;
-    case MOV_D_D:
-        // Do stuff
-        break;
-    case MOV_D_E:
-        // Do stuff
-        break;
-    case MOV_D_H:
-        // Do stuff
-        break;
-    case MOV_D_L:
-        // Do stuff
-        break;
-    case MOV_D_M:
-        // Do stuff
-        break;
-    case MOV_E_A:
-        // Do stuff
-        break;
-    case MOV_E_B:
-        // Do stuff
-        break;
-    case MOV_E_C:
-        // Do stuff
-        break;
-    case MOV_E_D:
-        // Do stuff
-        break;
-    case MOV_E_E:
-        // Do stuff
-        break;
-    case MOV_E_H:
-        // Do stuff
-        break;
-    case MOV_E_L:
-        // Do stuff
-        break;
-    case MOV_E_M:
-        // Do stuff
-        break;
-    case MOV_H_A:
-        // Do stuff
-        break;
-    case MOV_H_B:
-        // Do stuff
-        break;
-    case MOV_H_C:
-        // Do stuff
-        break;
-    case MOV_H_D:
-        // Do stuff
-        break;
-    case MOV_H_E:
-        // Do stuff
-        break;
-    case MOV_H_H:
-        // Do stuff
-        break;
-    case MOV_H_L:
-        // Do stuff
-        break;
-    case MOV_H_M:
-        // Do stuff
-        break;
-    case MOV_L_A:
-        // Do stuff
-        break;
-    case MOV_L_B:
-        // Do stuff
-        break;
-    case MOV_L_C:
-        // Do stuff
-        break;
-    case MOV_L_D:
-        // Do stuff
-        break;
-    case MOV_L_E:
-        // Do stuff
-        break;
-    case MOV_L_H:
-        // Do stuff
-        break;
-    case MOV_L_L:
-        // Do stuff
-        break;
-    case MOV_L_M:
-        // Do stuff
-        break;
-    case MOV_M_A:
-        // Do stuff
-        break;
-    case MOV_M_B:
-        // Do stuff
-        break;
-    case MOV_M_C:
-        // Do stuff
-        break;
-    case MOV_M_D:
-        // Do stuff
-        break;
-    case MOV_M_E:
-        // Do stuff
-        break;
-    case MOV_M_H:
-        // Do stuff
-        break;
-    case MOV_M_L:
-        // Do stuff
-        break;
+    case MOV_A_A: MOV_R_R(cpu, A, A);   break;
+    case MOV_A_B: MOV_R_R(cpu, A, B);   break;
+    case MOV_A_C: MOV_R_R(cpu, A, C);   break;
+    case MOV_A_D: MOV_R_R(cpu, A, D);   break;
+    case MOV_A_E: MOV_R_R(cpu, A, E);   break;
+    case MOV_A_H: MOV_R_R(cpu, A, H);   break;
+    case MOV_A_L: MOV_R_R(cpu, A, L);   break;
+    case MOV_A_M: MOV_R_M(cpu, A);      break;
+    case MOV_B_A: MOV_R_R(cpu, B, A);   break;
+    case MOV_B_B: MOV_R_R(cpu, B, B);   break;
+    case MOV_B_C: MOV_R_R(cpu, B, C);   break;
+    case MOV_B_D: MOV_R_R(cpu, B, D);   break;
+    case MOV_B_E: MOV_R_R(cpu, B, E);   break;
+    case MOV_B_H: MOV_R_R(cpu, B, H);   break;
+    case MOV_B_L: MOV_R_R(cpu, B, L);   break;
+    case MOV_B_M: MOV_R_M(cpu, B);      break;
+    case MOV_C_A: MOV_R_R(cpu, C, A);   break;
+    case MOV_C_B: MOV_R_R(cpu, C, B);   break;
+    case MOV_C_C: MOV_R_R(cpu, C, C);   break;
+    case MOV_C_D: MOV_R_R(cpu, C, D);   break;
+    case MOV_C_E: MOV_R_R(cpu, C, E);   break;
+    case MOV_C_H: MOV_R_R(cpu, C, H);   break;
+    case MOV_C_L: MOV_R_R(cpu, C, L);   break;
+    case MOV_C_M: MOV_R_M(cpu, C);      break;
+    case MOV_D_A: MOV_R_R(cpu, D, A);   break;
+    case MOV_D_B: MOV_R_R(cpu, D, B);   break;
+    case MOV_D_C: MOV_R_R(cpu, D, C);   break;
+    case MOV_D_D: MOV_R_R(cpu, D, D);   break;
+    case MOV_D_E: MOV_R_R(cpu, D, E);   break;
+    case MOV_D_H: MOV_R_R(cpu, D, H);   break;
+    case MOV_D_L: MOV_R_R(cpu, D, L);   break;
+    case MOV_D_M: MOV_R_M(cpu, D);      break;
+    case MOV_E_A: MOV_R_R(cpu, E, A);   break;
+    case MOV_E_B: MOV_R_R(cpu, E, B);   break;
+    case MOV_E_C: MOV_R_R(cpu, E, C);   break;
+    case MOV_E_D: MOV_R_R(cpu, E, D);   break;
+    case MOV_E_E: MOV_R_R(cpu, E, E);   break;
+    case MOV_E_H: MOV_R_R(cpu, E, H);   break;
+    case MOV_E_L: MOV_R_R(cpu, E, L);   break;
+    case MOV_E_M: MOV_R_M(cpu, E);      break;
+    case MOV_H_A: MOV_R_R(cpu, H, A);   break;
+    case MOV_H_B: MOV_R_R(cpu, H, B);   break;
+    case MOV_H_C: MOV_R_R(cpu, H, C);   break;
+    case MOV_H_D: MOV_R_R(cpu, H, D);   break;
+    case MOV_H_E: MOV_R_R(cpu, H, E);   break;
+    case MOV_H_H: MOV_R_R(cpu, H, H);   break;
+    case MOV_H_L: MOV_R_R(cpu, H, L);   break;
+    case MOV_H_M: MOV_R_M(cpu, H);      break;
+    case MOV_L_A: MOV_R_R(cpu, L, A);   break;
+    case MOV_L_B: MOV_R_R(cpu, L, B);   break;
+    case MOV_L_C: MOV_R_R(cpu, L, C);   break;
+    case MOV_L_D: MOV_R_R(cpu, L, D);   break;
+    case MOV_L_E: MOV_R_R(cpu, L, E);   break;
+    case MOV_L_H: MOV_R_R(cpu, L, H);   break;
+    case MOV_L_L: MOV_R_R(cpu, L, L);   break;
+    case MOV_L_M: MOV_R_M(cpu, L);      break;
+    case MOV_M_A: MOV_M_R(cpu, A);      break;
+    case MOV_M_B: MOV_M_R(cpu, B);      break;
+    case MOV_M_C: MOV_M_R(cpu, C);      break;
+    case MOV_M_D: MOV_M_R(cpu, D);      break;
+    case MOV_M_E: MOV_M_R(cpu, E);      break;
+    case MOV_M_H: MOV_M_R(cpu, H);      break;
+    case MOV_M_L: MOV_M_R(cpu, L);      break;
     case MVI_A:
         // Do stuff
         break;
