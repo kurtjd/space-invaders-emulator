@@ -563,15 +563,15 @@ void cpu_tick(CPU *cpu) {
     case OP_DAA:     DAA(cpu);                     break;
 
     /* Logical Group */
-    case OP_ANA_A: break;
-    case OP_ANA_B: break;
-    case OP_ANA_C: break;
-    case OP_ANA_D: break;
-    case OP_ANA_E: break;
-    case OP_ANA_H: break;
-    case OP_ANA_L: break;
-    case OP_ANA_M: break;
-    case OP_ANI: break;
+    case OP_ANA_A:   ANA_R(cpu, A);                break;
+    case OP_ANA_B:   ANA_R(cpu, B);                break;
+    case OP_ANA_C:   ANA_R(cpu, C);                break;
+    case OP_ANA_D:   ANA_R(cpu, D);                break;
+    case OP_ANA_E:   ANA_R(cpu, E);                break;
+    case OP_ANA_H:   ANA_R(cpu, H);                break;
+    case OP_ANA_L:   ANA_R(cpu, L);                break;
+    case OP_ANA_M:   ANA_M(cpu);                   break;
+    case OP_ANI:     ANI(cpu, operands[0]);        break;
     case OP_XRA_A: break;
     case OP_XRA_B: break;
     case OP_XRA_C: break;

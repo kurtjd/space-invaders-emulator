@@ -123,6 +123,28 @@ static void _update_flags_dec(CPU *cpu, uint8_t val) {
     _update_flag_ac_sub(cpu, val, 1, false);
 }
 
+/* Called by logical-related opcodes that follow standard flag update behavior. */
+static void _update_flags_log(CPU *cpu, uint8_t val) {
+    _update_flag_z(cpu, val);
+    _update_flag_p(cpu, val);
+    _update_flag_s(cpu, val);
+}
+
+/* Called by and-related opcodes that follow standard flag update behavior. */
+static void _update_flags_and(CPU *cpu, uint8_t val1, uint8_t val2) {
+    _update_flags_log(cpu, val1 & val2);
+    cpu_set_flag_bit(cpu, CY, false);
+
+    // Weird note: Logical AND ops set AC to the logical or of bit 3
+    cpu_set_flag_bit(cpu, AC, ((val1 | val2) >> 3) & 1);
+}
+
+/* Called by or-related opcodes that follow standard flag update behavior. */
+static void _update_flags_or(CPU *cpu, uint8_t val1, uint8_t val2) {
+    _update_flags_log(cpu, val1 | val2);
+    _clear_cy_ac(cpu);
+}
+
 /* Simply swaps two values */
 static void _swap(uint8_t *a, uint8_t *b) {
     uint8_t tmp = *a;
@@ -308,7 +330,7 @@ void DAD_SP(CPU *cpu) {
 
 void DAA(CPU *cpu) {
     // Complicated. Come back to this one.
-    
+
     if (cpu_get_flag_bit(cpu, AC) || ((cpu->reg[A] & 0xF) > 9)) {
         cpu->reg[A] += 6;
     }
@@ -318,4 +340,21 @@ void DAA(CPU *cpu) {
         uint8_t msb = (cpu->reg[A] >> 4) + 6;
         cpu->reg[A] = (msb << 4) | lsb;
     }
+}
+
+void ANA_R(CPU *cpu, REGISTERS src) {
+    _update_flags_and(cpu, cpu->reg[A], cpu->reg[src]);
+    cpu->reg[A] &= cpu->reg[src];
+}
+
+void ANA_M(CPU *cpu) {
+    uint8_t val = cpu->memory[cpu_get_reg_pair(cpu, H, L)];
+    _update_flags_and(cpu, cpu->reg[A], val);
+    cpu->reg[A] &= val;
+}
+
+void ANI(CPU *cpu, uint8_t operand) {
+    _update_flags_and(cpu, cpu->reg[A], operand);
+    cpu_set_flag_bit(cpu, AC, false); // This particular AND clears AC
+    cpu->reg[A] &= operand;
 }

@@ -40,5 +40,8 @@ void DCX_SP(CPU *cpu);
 void DAD_RP(CPU *cpu, REGISTERS src);
 void DAD_SP(CPU *cpu);
 void DAA(CPU *cpu);
+void ANA_R(CPU *cpu, REGISTERS src);
+void ANA_M(CPU *cpu);
+void ANI(CPU *cpu, uint8_t operand);
 
 #endif
