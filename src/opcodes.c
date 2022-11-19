@@ -103,6 +103,16 @@ static void _update_flags_sub(CPU *cpu, uint8_t val1, uint8_t val2, bool carry) 
     _update_flag_cy_sub(cpu, val1, val2, carry);
 }
 
+/* Called by inc-related opcodes that follow standard flag update behavior. */
+static void _update_flags_inc(CPU *cpu, uint8_t val) {
+    uint8_t res = val + 1;
+
+    _update_flag_z(cpu, res);
+    _update_flag_p(cpu, res);
+    _update_flag_s(cpu, res);
+    _update_flag_ac_add(cpu, val, 1, false);
+}
+
 /* Simply swaps two values */
 static void _swap(uint8_t *a, uint8_t *b) {
     uint8_t tmp = *a;
@@ -234,4 +244,14 @@ void SBB_M(CPU *cpu) {
 void SBI(CPU *cpu, uint8_t operand) {
     _update_flags_sub(cpu, cpu->reg[A], operand, true);
     cpu->reg[A] -= (operand + cpu_get_flag_bit(cpu, CY));
+}
+
+void INR_R(CPU *cpu, REGISTERS dest) {
+    _update_flags_inc(cpu, cpu->reg[dest]);
+    cpu->reg[dest]++;
+}
+
+void INR_M(CPU *cpu) {
+    _update_flags_inc(cpu, cpu->memory[cpu_get_reg_pair(cpu, H, L)]);
+    cpu->memory[cpu_get_reg_pair(cpu, H, L)]++;
 }

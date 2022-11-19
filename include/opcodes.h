@@ -29,5 +29,7 @@ void SUI(CPU *cpu, uint8_t operand);
 void SBB_R(CPU *cpu, REGISTERS src);
 void SBB_M(CPU *cpu);
 void SBI(CPU *cpu, uint8_t operand);
+void INR_R(CPU *cpu, REGISTERS dest);
+void INR_M(CPU *cpu);
 
 #endif
