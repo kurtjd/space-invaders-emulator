@@ -456,3 +456,13 @@ void CMC(CPU *cpu) {
 void STC(CPU *cpu) {
     cpu_set_flag_bit(cpu, CY, true);
 }
+
+void JMP(CPU *cpu, uint8_t operands[MAX_OPERANDS]) {
+    cpu->pc = (operands[1] << 8) | operands[0];
+}
+
+void JCC(CPU *cpu, FLAG_BITS flag, bool cmp, uint8_t operands[MAX_OPERANDS]) {
+    if (cpu_get_flag_bit(cpu, flag) == cmp) {
+        JMP(cpu, operands);
+    }
+}

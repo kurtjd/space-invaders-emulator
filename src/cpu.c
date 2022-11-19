@@ -608,15 +608,15 @@ void cpu_tick(CPU *cpu) {
     case OP_STC:     STC(cpu);                     break;
 
     /* Branch Group */
-    case OP_JMP: break;
-    case OP_JNZ: break;
-    case OP_JZ: break;
-    case OP_JNC: break;
-    case OP_JC: break;
-    case OP_JPO: break;
-    case OP_JPE: break;
-    case OP_JP: break;
-    case OP_JM: break;
+    case OP_JMP:     JMP(cpu, operands);           break;
+    case OP_JNZ:     JCC(cpu, Z, 0, operands);     break;
+    case OP_JZ:      JCC(cpu, Z, 1, operands);     break;
+    case OP_JNC:     JCC(cpu, CY, 0, operands);    break;
+    case OP_JC:      JCC(cpu, CY, 1, operands);    break;
+    case OP_JPO:     JCC(cpu, P, 0, operands);     break;
+    case OP_JPE:     JCC(cpu, P, 1, operands);     break;
+    case OP_JP:      JCC(cpu, S, 0, operands);     break;
+    case OP_JM:      JCC(cpu, S, 1, operands);     break;
     case OP_CALL: break;
     case OP_CNZ: break;
     case OP_CZ: break;
