@@ -61,5 +61,11 @@ void CMC(CPU *cpu);
 void STC(CPU *cpu);
 void JMP(CPU *cpu, uint8_t operands[MAX_OPERANDS]);
 void JCC(CPU *cpu, FLAG_BITS flag, bool cmp, uint8_t operands[MAX_OPERANDS]);
+void CALL(CPU *cpu, uint8_t operands[MAX_OPERANDS]);
+void CCC(CPU *cpu, FLAG_BITS flag, bool cmp, uint8_t operands[MAX_OPERANDS]);
+void RET(CPU *cpu);
+void RCC(CPU *cpu, FLAG_BITS flag, bool cmp);
+void RST_N(CPU *cpu, uint8_t n);
+void PCHL(CPU *cpu);
 
 #endif

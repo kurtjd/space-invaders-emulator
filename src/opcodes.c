@@ -466,3 +466,40 @@ void JCC(CPU *cpu, FLAG_BITS flag, bool cmp, uint8_t operands[MAX_OPERANDS]) {
         JMP(cpu, operands);
     }
 }
+
+void CALL(CPU *cpu, uint8_t operands[MAX_OPERANDS]) {
+    cpu->memory[cpu->sp - 1] = cpu->pc >> 4;
+    cpu->memory[cpu->sp - 2] = cpu->pc & 0xF;
+
+    cpu->sp -= 2;
+    cpu->pc = (operands[1] << 8) | operands[0];
+}
+
+void CCC(CPU *cpu, FLAG_BITS flag, bool cmp, uint8_t operands[MAX_OPERANDS]) {
+    if (cpu_get_flag_bit(cpu, flag) == cmp) {
+        CALL(cpu, operands);
+    }
+}
+
+void RET(CPU *cpu) {
+    cpu->pc = (cpu->memory[cpu->sp + 1] << 8) | cpu->memory[cpu->sp];
+    cpu->sp += 2;
+}
+
+void RCC(CPU *cpu, FLAG_BITS flag, bool cmp) {
+    if (cpu_get_flag_bit(cpu, flag) == cmp) {
+        RET(cpu);
+    }
+}
+
+void RST_N(CPU *cpu, uint8_t n) {
+    cpu->memory[cpu->sp - 1] = cpu->pc >> 4;
+    cpu->memory[cpu->sp - 2] = cpu->pc & 0xF;
+
+    cpu->sp -= 2;
+    cpu->pc = 8 * n;
+}
+
+void PCHL(CPU *cpu) {
+    cpu->pc = cpu_get_reg_pair(cpu, H, L);
+}
