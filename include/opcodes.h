@@ -33,5 +33,9 @@ void INR_R(CPU *cpu, REGISTERS dest);
 void INR_M(CPU *cpu);
 void DCR_R(CPU *cpu, REGISTERS dest);
 void DCR_M(CPU *cpu);
+void INX_RP(CPU *cpu, REGISTERS dest);
+void INX_SP(CPU *cpu);
+void DCX_RP(CPU *cpu, REGISTERS dest);
+void DCX_SP(CPU *cpu);
 
 #endif

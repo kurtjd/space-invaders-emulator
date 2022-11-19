@@ -275,3 +275,21 @@ void DCR_M(CPU *cpu) {
     _update_flags_dec(cpu, cpu->memory[cpu_get_reg_pair(cpu, H, L)]);
     cpu->memory[cpu_get_reg_pair(cpu, H, L)]--;
 }
+
+void INX_RP(CPU *cpu, REGISTERS dest) {
+    uint16_t val = cpu_get_reg_pair(cpu, dest, dest + 1) + 1;
+    cpu_set_reg_pair(cpu, dest, dest + 1, val);
+}
+
+void INX_SP(CPU *cpu) {
+    cpu->sp++;
+}
+
+void DCX_RP(CPU *cpu, REGISTERS dest) {
+    uint16_t val = cpu_get_reg_pair(cpu, dest, dest + 1) - 1;
+    cpu_set_reg_pair(cpu, dest, dest + 1, val);
+}
+
+void DCX_SP(CPU *cpu) {
+    cpu->sp--;
+}
