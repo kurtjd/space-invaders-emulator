@@ -82,9 +82,9 @@ static void _update_flag_p(CPU *cpu, uint8_t res) {
 }
 
 static void _swap(uint8_t *a, uint8_t *b) {
-    *a ^= *b;
-    *b ^= *a;
-    *a ^= *b;
+    uint8_t tmp = *a;
+    *a = *b;
+    *b = tmp;
 }
 
 
