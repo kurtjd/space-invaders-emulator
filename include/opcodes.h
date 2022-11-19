@@ -43,5 +43,8 @@ void DAA(CPU *cpu);
 void ANA_R(CPU *cpu, REGISTERS src);
 void ANA_M(CPU *cpu);
 void ANI(CPU *cpu, uint8_t operand);
+void XRA_R(CPU *cpu, REGISTERS src);
+void XRA_M(CPU *cpu);
+void XRI(CPU *cpu, uint8_t operand);
 
 #endif

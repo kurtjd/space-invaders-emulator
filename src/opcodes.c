@@ -140,8 +140,8 @@ static void _update_flags_and(CPU *cpu, uint8_t val1, uint8_t val2) {
 }
 
 /* Called by or-related opcodes that follow standard flag update behavior. */
-static void _update_flags_or(CPU *cpu, uint8_t val1, uint8_t val2) {
-    _update_flags_log(cpu, val1 | val2);
+static void _update_flags_or(CPU *cpu, uint8_t val) {
+    _update_flags_log(cpu, val);
     _clear_cy_ac(cpu);
 }
 
@@ -357,4 +357,22 @@ void ANI(CPU *cpu, uint8_t operand) {
     _update_flags_and(cpu, cpu->reg[A], operand);
     cpu_set_flag_bit(cpu, AC, false); // This particular AND clears AC
     cpu->reg[A] &= operand;
+}
+
+void XRA_R(CPU *cpu, REGISTERS src) {
+    uint8_t res = cpu->reg[A] ^ cpu->reg[src];
+    _update_flags_or(cpu, res);
+    cpu->reg[A] = res;
+}
+
+void XRA_M(CPU *cpu) {
+    uint8_t res = cpu->reg[A] ^ cpu->memory[cpu_get_reg_pair(cpu, H, L)];
+    _update_flags_or(cpu, res);
+    cpu->reg[A] = res;
+}
+
+void XRI(CPU *cpu, uint8_t operand) {
+    uint8_t res = cpu->reg[A] ^ operand;
+    _update_flags_or(cpu, res);
+    cpu->reg[A] = res;
 }
