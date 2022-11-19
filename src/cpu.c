@@ -481,19 +481,19 @@ void cpu_tick(CPU *cpu) {
     case OP_MVI_H:   MVI_R(cpu, H, operands[0]);   break;
     case OP_MVI_L:   MVI_R(cpu, L, operands[0]);   break;
     case OP_MVI_M:   MVI_M(cpu, operands[0]);      break;
-    case OP_LXI_B: break;
-    case OP_LXI_D: break;
-    case OP_LXI_H: break;
-    case OP_LXI_SP: break;
-    case OP_LDA: break;
-    case OP_STA: break;
-    case OP_LHLD: break;
-    case OP_SHLD: break;
-    case OP_LDAX_B: break;
-    case OP_LDAX_D: break;
-    case OP_STAX_B: break;
-    case OP_STAX_D: break;
-    case OP_XCHG: break;
+    case OP_LXI_B:   LXI_RP(cpu, B, operands);     break;
+    case OP_LXI_D:   LXI_RP(cpu, D, operands);     break;
+    case OP_LXI_H:   LXI_RP(cpu, H, operands);     break;
+    case OP_LXI_SP:  LXI_SP(cpu, operands);        break;
+    case OP_LDA:     LDA(cpu, operands);           break;
+    case OP_STA:     STA(cpu, operands);           break;
+    case OP_LHLD:    LHLD(cpu, operands);          break;
+    case OP_SHLD:    SHLD(cpu, operands);          break;
+    case OP_LDAX_B:  LDAX_RP(cpu, B);              break;
+    case OP_LDAX_D:  LDAX_RP(cpu, D);              break;
+    case OP_STAX_B:  STAX_RP(cpu, B);              break;
+    case OP_STAX_D:  STAX_RP(cpu, D);              break;
+    case OP_XCHG:    XCHG(cpu);                    break;
     
     /* Arithmetic Group */
     case OP_ADD_A: break;
