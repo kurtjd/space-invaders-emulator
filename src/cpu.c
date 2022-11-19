@@ -603,9 +603,9 @@ void cpu_tick(CPU *cpu) {
     case OP_RRC:     RRC(cpu);                     break;
     case OP_RAL:     RAL(cpu);                     break;
     case OP_RAR:     RAR(cpu);                     break;
-    case OP_CMA: break;
-    case OP_CMC: break;
-    case OP_STC: break;
+    case OP_CMA:     CMA(cpu);                     break;
+    case OP_CMC:     CMC(cpu);                     break;
+    case OP_STC:     STC(cpu);                     break;
 
     /* Branch Group */
     case OP_JMP: break;

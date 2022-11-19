@@ -444,3 +444,15 @@ void RAR(CPU *cpu) {
     cpu->reg[A] |= cpu_get_flag_bit(cpu, CY);
     cpu_set_flag_bit(cpu, CY, lsb);
 }
+
+void CMA(CPU *cpu) {
+    cpu->reg[A] ^= 0xFF;
+}
+
+void CMC(CPU *cpu) {
+    cpu_set_flag_bit(cpu, CY, !cpu_get_flag_bit(cpu, CY));
+}
+
+void STC(CPU *cpu) {
+    cpu_set_flag_bit(cpu, CY, true);
+}

@@ -56,5 +56,8 @@ void RLC(CPU *cpu);
 void RRC(CPU *cpu);
 void RAL(CPU *cpu);
 void RAR(CPU *cpu);
+void CMA(CPU *cpu);
+void CMC(CPU *cpu);
+void STC(CPU *cpu);
 
 #endif
