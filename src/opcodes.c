@@ -293,3 +293,29 @@ void DCX_RP(CPU *cpu, REGISTERS dest) {
 void DCX_SP(CPU *cpu) {
     cpu->sp--;
 }
+
+void DAD_RP(CPU *cpu, REGISTERS src) {
+    uint32_t res = cpu_get_reg_pair(cpu, H, L) + cpu_get_reg_pair(cpu, src, src + 1);
+    cpu_set_flag_bit(cpu, CY, res > 0xFFFF);
+    cpu_set_reg_pair(cpu, H, L, res);
+}
+
+void DAD_SP(CPU *cpu) {
+    uint32_t res = cpu_get_reg_pair(cpu, H, L) + cpu->sp;
+    cpu_set_flag_bit(cpu, CY, res > 0xFFFF);
+    cpu_set_reg_pair(cpu, H, L, res);
+}
+
+void DAA(CPU *cpu) {
+    // Complicated. Come back to this one.
+    
+    if (cpu_get_flag_bit(cpu, AC) || ((cpu->reg[A] & 0xF) > 9)) {
+        cpu->reg[A] += 6;
+    }
+
+    if (cpu_get_flag_bit(cpu, CY) || ((cpu->reg[A] >> 4) > 9)) {
+        uint8_t lsb = cpu->reg[A] & 0xF;
+        uint8_t msb = (cpu->reg[A] >> 4) + 6;
+        cpu->reg[A] = (msb << 4) | lsb;
+    }
+}

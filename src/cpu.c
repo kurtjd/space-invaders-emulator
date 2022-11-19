@@ -556,11 +556,11 @@ void cpu_tick(CPU *cpu) {
     case OP_DCX_D:   DCX_RP(cpu, D);               break;
     case OP_DCX_H:   DCX_RP(cpu, H);               break;
     case OP_DCX_SP:  DCX_SP(cpu);                  break;
-    case OP_DAD_B: break;
-    case OP_DAD_D: break;
-    case OP_DAD_H: break;
-    case OP_DAD_SP: break;
-    case OP_DAA: break;
+    case OP_DAD_B:   DAD_RP(cpu, B);               break;
+    case OP_DAD_D:   DAD_RP(cpu, D);               break;
+    case OP_DAD_H:   DAD_RP(cpu, H);               break;
+    case OP_DAD_SP:  DAD_SP(cpu);                  break;
+    case OP_DAA:     DAA(cpu);                     break;
 
     /* Logical Group */
     case OP_ANA_A: break;

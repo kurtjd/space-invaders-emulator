@@ -37,5 +37,8 @@ void INX_RP(CPU *cpu, REGISTERS dest);
 void INX_SP(CPU *cpu);
 void DCX_RP(CPU *cpu, REGISTERS dest);
 void DCX_SP(CPU *cpu);
+void DAD_RP(CPU *cpu, REGISTERS src);
+void DAD_SP(CPU *cpu);
+void DAA(CPU *cpu);
 
 #endif
