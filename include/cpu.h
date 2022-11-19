@@ -6,6 +6,7 @@
 
 
 #define NUM_OPCODES 0x100
+#define MAX_OPERANDS 2
 #define NUM_REGS 8
 #define MAX_MEM 0x10000
 #define NUM_IO 0xFF

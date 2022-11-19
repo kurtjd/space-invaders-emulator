@@ -17,5 +17,7 @@ void SHLD(CPU *cpu, const uint8_t operands[2]);
 void LDAX_RP(CPU *cpu, REGISTERS src);
 void STAX_RP(CPU *cpu, REGISTERS src);
 void XCHG(CPU *cpu);
+void ADD_R(CPU *cpu, REGISTERS src);
+void ADD_M(CPU *cpu);
 
 #endif

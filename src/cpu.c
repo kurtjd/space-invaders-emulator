@@ -395,7 +395,7 @@ void cpu_tick(CPU *cpu) {
      * LSB of the 16-bit value and the second byte the MSB due to the
      * little-endianess of the 8080.
      */
-    uint8_t operands[2] = {
+    uint8_t operands[MAX_OPERANDS] = {
         cpu->memory[cpu->pc + 1],
         cpu->memory[cpu->pc + 2]
     };
@@ -496,14 +496,14 @@ void cpu_tick(CPU *cpu) {
     case OP_XCHG:    XCHG(cpu);                    break;
     
     /* Arithmetic Group */
-    case OP_ADD_A: break;
-    case OP_ADD_B: break;
-    case OP_ADD_C: break;
-    case OP_ADD_D: break;
-    case OP_ADD_E: break;
-    case OP_ADD_H: break;
-    case OP_ADD_L: break;
-    case OP_ADD_M: break;
+    case OP_ADD_A:   ADD_R(cpu, A);                break;
+    case OP_ADD_B:   ADD_R(cpu, B);                break;
+    case OP_ADD_C:   ADD_R(cpu, C);                break;
+    case OP_ADD_D:   ADD_R(cpu, D);                break;
+    case OP_ADD_E:   ADD_R(cpu, E);                break;
+    case OP_ADD_H:   ADD_R(cpu, H);                break;
+    case OP_ADD_L:   ADD_R(cpu, L);                break;
+    case OP_ADD_M:   ADD_M(cpu);                   break;
     case OP_ADI: break;
     case OP_ADC_A: break;
     case OP_ADC_B: break;

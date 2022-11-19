@@ -65,7 +65,7 @@ static void _update_flag_s(CPU *cpu, uint8_t res) {
     cpu_set_flag_bit(cpu, S, res & (1 << 7));
 }
 
-/* Sets zero flag equal to 1 if res == 0, otherwise set to 0.  */
+/* Sets zero flag equal to 1 if res == 0, otherwise set to 0. */
 static void _update_flag_z(CPU *cpu, uint8_t res) {
     cpu_set_flag_bit(cpu, Z, !res);
 }
@@ -81,6 +81,18 @@ static void _update_flag_p(CPU *cpu, uint8_t res) {
     cpu_set_flag_bit(cpu, P, !(high_bits % 2));
 }
 
+/* Called by add-related opcodes that follow standard flag update behavior. */
+static void _update_flags_add(CPU *cpu, uint8_t val1, uint8_t val2, bool carry) {
+    uint8_t res = val1 + val2;
+
+    _update_flag_z(cpu, res);
+    _update_flag_p(cpu, res);
+    _update_flag_s(cpu, res);
+    _update_flag_ac_add(cpu, val1, val2, carry);
+    _update_flag_cy_add(cpu, val1, val2, carry);
+}
+
+/* Simply swaps two values */
 static void _swap(uint8_t *a, uint8_t *b) {
     uint8_t tmp = *a;
     *a = *b;
@@ -108,29 +120,29 @@ void MVI_M(CPU *cpu, uint8_t operand) {
     cpu->memory[cpu_get_reg_pair(cpu, H, L)] = operand;
 }
 
-void LXI_RP(CPU *cpu, REGISTERS dest, const uint8_t operands[2]) {
+void LXI_RP(CPU *cpu, REGISTERS dest, const uint8_t operands[MAX_OPERANDS]) {
     cpu_set_reg_pair(cpu, dest, dest + 1, (operands[1] << 8) | operands[0]);
 }
 
-void LXI_SP(CPU *cpu, const uint8_t operands[2]) {
+void LXI_SP(CPU *cpu, const uint8_t operands[MAX_OPERANDS]) {
     cpu->sp = (operands[1] << 8) | operands[0];
 }
 
-void LDA(CPU *cpu, const uint8_t operands[2]) {
+void LDA(CPU *cpu, const uint8_t operands[MAX_OPERANDS]) {
     cpu->reg[A] = cpu->memory[(operands[1] << 8) | operands[0]];
 }
 
-void STA(CPU *cpu, const uint8_t operands[2]) {
+void STA(CPU *cpu, const uint8_t operands[MAX_OPERANDS]) {
     cpu->memory[(operands[1] << 8) | operands[0]] = cpu->reg[A];
 }
 
-void LHLD(CPU *cpu, const uint8_t operands[2]) {
+void LHLD(CPU *cpu, const uint8_t operands[MAX_OPERANDS]) {
     uint16_t addr = (operands[1] << 8) | operands[0];
     cpu->reg[L] = cpu->memory[addr];
     cpu->reg[H] = cpu->memory[addr + 1];
 }
 
-void SHLD(CPU *cpu, const uint8_t operands[2]) {
+void SHLD(CPU *cpu, const uint8_t operands[MAX_OPERANDS]) {
     uint16_t addr = (operands[1] << 8) | operands[0];
     cpu->memory[addr] = cpu->reg[L];
     cpu->memory[addr + 1] = cpu->reg[H];
@@ -147,4 +159,15 @@ void STAX_RP(CPU *cpu, REGISTERS src) {
 void XCHG(CPU *cpu) {
     _swap(&cpu->reg[H], &cpu->reg[D]);
     _swap(&cpu->reg[L], &cpu->reg[E]);
+}
+
+void ADD_R(CPU *cpu, REGISTERS src) {
+    _update_flags_add(cpu, cpu->reg[A], cpu->reg[src], false);
+    cpu->reg[A] += cpu->reg[src];
+}
+
+void ADD_M(CPU *cpu) {
+    uint8_t val = cpu->memory[cpu_get_reg_pair(cpu, H, L)];
+    _update_flags_add(cpu, cpu->reg[A], val, false);
+    cpu->reg[A] += val;
 }
