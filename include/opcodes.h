@@ -52,5 +52,9 @@ void ORI(CPU *cpu, uint8_t operand);
 void CMP_R(CPU *cpu, REGISTERS src);
 void CMP_M(CPU *cpu);
 void CPI(CPU *cpu, uint8_t operand);
+void RLC(CPU *cpu);
+void RRC(CPU *cpu);
+void RAL(CPU *cpu);
+void RAR(CPU *cpu);
 
 #endif

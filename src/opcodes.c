@@ -416,3 +416,31 @@ void CMP_M(CPU *cpu) {
 void CPI(CPU *cpu, uint8_t operand) {
     _update_flags_cmp(cpu, cpu->reg[A], operand);
 }
+
+void RLC(CPU *cpu) {
+    uint8_t msb = cpu->reg[A] >> 7;
+    cpu->reg[A] <<= 1;
+    cpu->reg[A] |= msb;
+    cpu_set_flag_bit(cpu, CY, msb);
+}
+
+void RRC(CPU *cpu) {
+    uint8_t lsb = cpu->reg[A] & 1;
+    cpu->reg[A] >>= 1;
+    cpu->reg[A] |= (lsb << 7);
+    cpu_set_flag_bit(cpu, CY, lsb);
+}
+
+void RAL(CPU *cpu) {
+    uint8_t msb = cpu->reg[A] >> 7;
+    cpu->reg[A] <<= 1;
+    cpu->reg[A] |= cpu_get_flag_bit(cpu, CY);
+    cpu_set_flag_bit(cpu, CY, msb);
+}
+
+void RAR(CPU *cpu) {
+    uint8_t lsb = cpu->reg[A] & 1;
+    cpu->reg[A] >>= 1;
+    cpu->reg[A] |= cpu_get_flag_bit(cpu, CY);
+    cpu_set_flag_bit(cpu, CY, lsb);
+}

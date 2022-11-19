@@ -599,10 +599,10 @@ void cpu_tick(CPU *cpu) {
     case OP_CMP_L:   CMP_R(cpu, L);                break;
     case OP_CMP_M:   CMP_M(cpu);                   break;
     case OP_CPI:     CPI(cpu, operands[0]);        break;
-    case OP_RLC: break;
-    case OP_RRC: break;
-    case OP_RAL: break;
-    case OP_RAR: break;
+    case OP_RLC:     RLC(cpu);                     break;
+    case OP_RRC:     RRC(cpu);                     break;
+    case OP_RAL:     RAL(cpu);                     break;
+    case OP_RAR:     RAR(cpu);                     break;
     case OP_CMA: break;
     case OP_CMC: break;
     case OP_STC: break;
