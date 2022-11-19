@@ -93,3 +93,11 @@ void MOV_R_M(CPU *cpu, REGISTERS dest) {
 void MOV_M_R(CPU *cpu, REGISTERS src) {
     cpu->memory[cpu_get_reg_pair(cpu, H, L)] = cpu->reg[src];
 }
+
+void MVI_R(CPU *cpu, REGISTERS dest, uint8_t operand) {
+    cpu->reg[dest] = operand;
+}
+
+void MVI_M(CPU *cpu, uint8_t operand) {
+    cpu->memory[cpu_get_reg_pair(cpu, H, L)] = operand;
+}

@@ -276,52 +276,52 @@ static void _init_opcode_size(void) {
     }
 
     // Explicitly initialize any opcodes with size 2
-    opcode_size[MVI_B] = 2;
-    opcode_size[MVI_C] = 2;
-    opcode_size[MVI_D] = 2;
-    opcode_size[MVI_E] = 2;
-    opcode_size[MVI_H] = 2;
-    opcode_size[MVI_L] = 2;
-    opcode_size[MVI_M] = 2;
-    opcode_size[MVI_A] = 2;
-    opcode_size[ADI]   = 2;
-    opcode_size[ACI]   = 2;
-    opcode_size[OUT]   = 2;
-    opcode_size[SUI]   = 2;
-    opcode_size[IN]    = 2;
-    opcode_size[SBI]   = 2;
-    opcode_size[ANI]   = 2;
-    opcode_size[XRI]   = 2;
-    opcode_size[ORI]   = 2;
-    opcode_size[CPI]   = 2;
+    opcode_size[OP_MVI_B] = 2;
+    opcode_size[OP_MVI_C] = 2;
+    opcode_size[OP_MVI_D] = 2;
+    opcode_size[OP_MVI_E] = 2;
+    opcode_size[OP_MVI_H] = 2;
+    opcode_size[OP_MVI_L] = 2;
+    opcode_size[OP_MVI_M] = 2;
+    opcode_size[OP_MVI_A] = 2;
+    opcode_size[OP_ADI]   = 2;
+    opcode_size[OP_ACI]   = 2;
+    opcode_size[OP_OUT]   = 2;
+    opcode_size[OP_SUI]   = 2;
+    opcode_size[OP_IN]    = 2;
+    opcode_size[OP_SBI]   = 2;
+    opcode_size[OP_ANI]   = 2;
+    opcode_size[OP_XRI]   = 2;
+    opcode_size[OP_ORI]   = 2;
+    opcode_size[OP_CPI]   = 2;
 
     // Explicitly initialize any opcodes with size 3
-    opcode_size[LXI_B]  = 3;
-    opcode_size[LXI_D]  = 3;
-    opcode_size[LXI_H]  = 3;
-    opcode_size[SHLD]   = 3;
-    opcode_size[LHLD]   = 3;
-    opcode_size[LXI_SP] = 3;
-    opcode_size[STA]    = 3;
-    opcode_size[LDA]    = 3;
-    opcode_size[JNZ]    = 3;
-    opcode_size[JMP]    = 3;
-    opcode_size[CNZ]    = 3;
-    opcode_size[JZ]     = 3;
-    opcode_size[CZ]     = 3;
-    opcode_size[CALL]   = 3;
-    opcode_size[JNC]    = 3;
-    opcode_size[CNC]    = 3;
-    opcode_size[JC]     = 3;
-    opcode_size[CC]     = 3;
-    opcode_size[JPO]    = 3;
-    opcode_size[CPO]    = 3;
-    opcode_size[JPE]    = 3;
-    opcode_size[CPE]    = 3;
-    opcode_size[JP]     = 3;
-    opcode_size[CP]     = 3;
-    opcode_size[JM]     = 3;
-    opcode_size[CM]     = 3;
+    opcode_size[OP_LXI_B]  = 3;
+    opcode_size[OP_LXI_D]  = 3;
+    opcode_size[OP_LXI_H]  = 3;
+    opcode_size[OP_SHLD]   = 3;
+    opcode_size[OP_LHLD]   = 3;
+    opcode_size[OP_LXI_SP] = 3;
+    opcode_size[OP_STA]    = 3;
+    opcode_size[OP_LDA]    = 3;
+    opcode_size[OP_JNZ]    = 3;
+    opcode_size[OP_JMP]    = 3;
+    opcode_size[OP_CNZ]    = 3;
+    opcode_size[OP_JZ]     = 3;
+    opcode_size[OP_CZ]     = 3;
+    opcode_size[OP_CALL]   = 3;
+    opcode_size[OP_JNC]    = 3;
+    opcode_size[OP_CNC]    = 3;
+    opcode_size[OP_JC]     = 3;
+    opcode_size[OP_CC]     = 3;
+    opcode_size[OP_JPO]    = 3;
+    opcode_size[OP_CPO]    = 3;
+    opcode_size[OP_JPE]    = 3;
+    opcode_size[OP_CPE]    = 3;
+    opcode_size[OP_JP]     = 3;
+    opcode_size[OP_CP]     = 3;
+    opcode_size[OP_JM]     = 3;
+    opcode_size[OP_CM]     = 3;
 }
 
 
@@ -410,626 +410,260 @@ void cpu_tick(CPU *cpu) {
      */
     switch (opcode) {
     /* Data Transfer Group */
-    case MOV_A_A: MOV_R_R(cpu, A, A);   break;
-    case MOV_A_B: MOV_R_R(cpu, A, B);   break;
-    case MOV_A_C: MOV_R_R(cpu, A, C);   break;
-    case MOV_A_D: MOV_R_R(cpu, A, D);   break;
-    case MOV_A_E: MOV_R_R(cpu, A, E);   break;
-    case MOV_A_H: MOV_R_R(cpu, A, H);   break;
-    case MOV_A_L: MOV_R_R(cpu, A, L);   break;
-    case MOV_A_M: MOV_R_M(cpu, A);      break;
-    case MOV_B_A: MOV_R_R(cpu, B, A);   break;
-    case MOV_B_B: MOV_R_R(cpu, B, B);   break;
-    case MOV_B_C: MOV_R_R(cpu, B, C);   break;
-    case MOV_B_D: MOV_R_R(cpu, B, D);   break;
-    case MOV_B_E: MOV_R_R(cpu, B, E);   break;
-    case MOV_B_H: MOV_R_R(cpu, B, H);   break;
-    case MOV_B_L: MOV_R_R(cpu, B, L);   break;
-    case MOV_B_M: MOV_R_M(cpu, B);      break;
-    case MOV_C_A: MOV_R_R(cpu, C, A);   break;
-    case MOV_C_B: MOV_R_R(cpu, C, B);   break;
-    case MOV_C_C: MOV_R_R(cpu, C, C);   break;
-    case MOV_C_D: MOV_R_R(cpu, C, D);   break;
-    case MOV_C_E: MOV_R_R(cpu, C, E);   break;
-    case MOV_C_H: MOV_R_R(cpu, C, H);   break;
-    case MOV_C_L: MOV_R_R(cpu, C, L);   break;
-    case MOV_C_M: MOV_R_M(cpu, C);      break;
-    case MOV_D_A: MOV_R_R(cpu, D, A);   break;
-    case MOV_D_B: MOV_R_R(cpu, D, B);   break;
-    case MOV_D_C: MOV_R_R(cpu, D, C);   break;
-    case MOV_D_D: MOV_R_R(cpu, D, D);   break;
-    case MOV_D_E: MOV_R_R(cpu, D, E);   break;
-    case MOV_D_H: MOV_R_R(cpu, D, H);   break;
-    case MOV_D_L: MOV_R_R(cpu, D, L);   break;
-    case MOV_D_M: MOV_R_M(cpu, D);      break;
-    case MOV_E_A: MOV_R_R(cpu, E, A);   break;
-    case MOV_E_B: MOV_R_R(cpu, E, B);   break;
-    case MOV_E_C: MOV_R_R(cpu, E, C);   break;
-    case MOV_E_D: MOV_R_R(cpu, E, D);   break;
-    case MOV_E_E: MOV_R_R(cpu, E, E);   break;
-    case MOV_E_H: MOV_R_R(cpu, E, H);   break;
-    case MOV_E_L: MOV_R_R(cpu, E, L);   break;
-    case MOV_E_M: MOV_R_M(cpu, E);      break;
-    case MOV_H_A: MOV_R_R(cpu, H, A);   break;
-    case MOV_H_B: MOV_R_R(cpu, H, B);   break;
-    case MOV_H_C: MOV_R_R(cpu, H, C);   break;
-    case MOV_H_D: MOV_R_R(cpu, H, D);   break;
-    case MOV_H_E: MOV_R_R(cpu, H, E);   break;
-    case MOV_H_H: MOV_R_R(cpu, H, H);   break;
-    case MOV_H_L: MOV_R_R(cpu, H, L);   break;
-    case MOV_H_M: MOV_R_M(cpu, H);      break;
-    case MOV_L_A: MOV_R_R(cpu, L, A);   break;
-    case MOV_L_B: MOV_R_R(cpu, L, B);   break;
-    case MOV_L_C: MOV_R_R(cpu, L, C);   break;
-    case MOV_L_D: MOV_R_R(cpu, L, D);   break;
-    case MOV_L_E: MOV_R_R(cpu, L, E);   break;
-    case MOV_L_H: MOV_R_R(cpu, L, H);   break;
-    case MOV_L_L: MOV_R_R(cpu, L, L);   break;
-    case MOV_L_M: MOV_R_M(cpu, L);      break;
-    case MOV_M_A: MOV_M_R(cpu, A);      break;
-    case MOV_M_B: MOV_M_R(cpu, B);      break;
-    case MOV_M_C: MOV_M_R(cpu, C);      break;
-    case MOV_M_D: MOV_M_R(cpu, D);      break;
-    case MOV_M_E: MOV_M_R(cpu, E);      break;
-    case MOV_M_H: MOV_M_R(cpu, H);      break;
-    case MOV_M_L: MOV_M_R(cpu, L);      break;
-    case MVI_A:
-        // Do stuff
-        break;
-    case MVI_B:
-        // Do stuff
-        break;
-    case MVI_C:
-        // Do stuff
-        break;
-    case MVI_D:
-        // Do stuff
-        break;
-    case MVI_E:
-        // Do stuff
-        break;
-    case MVI_H:
-        // Do stuff
-        break;
-    case MVI_L:
-        // Do stuff
-        break;
-    case MVI_M:
-        // Do stuff
-        break;
-    case LXI_B:
-        // Do stuff
-        break;
-    case LXI_D:
-        // Do stuff
-        break;
-    case LXI_H:
-        // Do stuff
-        break;
-    case LXI_SP:
-        // Do stuff
-        break;
-    case LDA:
-        // Do stuff
-        break;
-    case STA:
-        // Do stuff
-        break;
-    case LHLD:
-        // Do stuff
-        break;
-    case SHLD:
-        // Do stuff
-        break;
-    case LDAX_B:
-        // Do stuff
-        break;
-    case LDAX_D:
-        // Do stuff
-        break;
-    case STAX_B:
-        // Do stuff
-        break;
-    case STAX_D:
-        // Do stuff
-        break;
-    case XCHG:
-        // Do stuff
-        break;
+    case OP_MOV_A_A: MOV_R_R(cpu, A, A);           break;
+    case OP_MOV_A_B: MOV_R_R(cpu, A, B);           break;
+    case OP_MOV_A_C: MOV_R_R(cpu, A, C);           break;
+    case OP_MOV_A_D: MOV_R_R(cpu, A, D);           break;
+    case OP_MOV_A_E: MOV_R_R(cpu, A, E);           break;
+    case OP_MOV_A_H: MOV_R_R(cpu, A, H);           break;
+    case OP_MOV_A_L: MOV_R_R(cpu, A, L);           break;
+    case OP_MOV_A_M: MOV_R_M(cpu, A);              break;
+    case OP_MOV_B_A: MOV_R_R(cpu, B, A);           break;
+    case OP_MOV_B_B: MOV_R_R(cpu, B, B);           break;
+    case OP_MOV_B_C: MOV_R_R(cpu, B, C);           break;
+    case OP_MOV_B_D: MOV_R_R(cpu, B, D);           break;
+    case OP_MOV_B_E: MOV_R_R(cpu, B, E);           break;
+    case OP_MOV_B_H: MOV_R_R(cpu, B, H);           break;
+    case OP_MOV_B_L: MOV_R_R(cpu, B, L);           break;
+    case OP_MOV_B_M: MOV_R_M(cpu, B);              break;
+    case OP_MOV_C_A: MOV_R_R(cpu, C, A);           break;
+    case OP_MOV_C_B: MOV_R_R(cpu, C, B);           break;
+    case OP_MOV_C_C: MOV_R_R(cpu, C, C);           break;
+    case OP_MOV_C_D: MOV_R_R(cpu, C, D);           break;
+    case OP_MOV_C_E: MOV_R_R(cpu, C, E);           break;
+    case OP_MOV_C_H: MOV_R_R(cpu, C, H);           break;
+    case OP_MOV_C_L: MOV_R_R(cpu, C, L);           break;
+    case OP_MOV_C_M: MOV_R_M(cpu, C);              break;
+    case OP_MOV_D_A: MOV_R_R(cpu, D, A);           break;
+    case OP_MOV_D_B: MOV_R_R(cpu, D, B);           break;
+    case OP_MOV_D_C: MOV_R_R(cpu, D, C);           break;
+    case OP_MOV_D_D: MOV_R_R(cpu, D, D);           break;
+    case OP_MOV_D_E: MOV_R_R(cpu, D, E);           break;
+    case OP_MOV_D_H: MOV_R_R(cpu, D, H);           break;
+    case OP_MOV_D_L: MOV_R_R(cpu, D, L);           break;
+    case OP_MOV_D_M: MOV_R_M(cpu, D);              break;
+    case OP_MOV_E_A: MOV_R_R(cpu, E, A);           break;
+    case OP_MOV_E_B: MOV_R_R(cpu, E, B);           break;
+    case OP_MOV_E_C: MOV_R_R(cpu, E, C);           break;
+    case OP_MOV_E_D: MOV_R_R(cpu, E, D);           break;
+    case OP_MOV_E_E: MOV_R_R(cpu, E, E);           break;
+    case OP_MOV_E_H: MOV_R_R(cpu, E, H);           break;
+    case OP_MOV_E_L: MOV_R_R(cpu, E, L);           break;
+    case OP_MOV_E_M: MOV_R_M(cpu, E);              break;
+    case OP_MOV_H_A: MOV_R_R(cpu, H, A);           break;
+    case OP_MOV_H_B: MOV_R_R(cpu, H, B);           break;
+    case OP_MOV_H_C: MOV_R_R(cpu, H, C);           break;
+    case OP_MOV_H_D: MOV_R_R(cpu, H, D);           break;
+    case OP_MOV_H_E: MOV_R_R(cpu, H, E);           break;
+    case OP_MOV_H_H: MOV_R_R(cpu, H, H);           break;
+    case OP_MOV_H_L: MOV_R_R(cpu, H, L);           break;
+    case OP_MOV_H_M: MOV_R_M(cpu, H);              break;
+    case OP_MOV_L_A: MOV_R_R(cpu, L, A);           break;
+    case OP_MOV_L_B: MOV_R_R(cpu, L, B);           break;
+    case OP_MOV_L_C: MOV_R_R(cpu, L, C);           break;
+    case OP_MOV_L_D: MOV_R_R(cpu, L, D);           break;
+    case OP_MOV_L_E: MOV_R_R(cpu, L, E);           break;
+    case OP_MOV_L_H: MOV_R_R(cpu, L, H);           break;
+    case OP_MOV_L_L: MOV_R_R(cpu, L, L);           break;
+    case OP_MOV_L_M: MOV_R_M(cpu, L);              break;
+    case OP_MOV_M_A: MOV_M_R(cpu, A);              break;
+    case OP_MOV_M_B: MOV_M_R(cpu, B);              break;
+    case OP_MOV_M_C: MOV_M_R(cpu, C);              break;
+    case OP_MOV_M_D: MOV_M_R(cpu, D);              break;
+    case OP_MOV_M_E: MOV_M_R(cpu, E);              break;
+    case OP_MOV_M_H: MOV_M_R(cpu, H);              break;
+    case OP_MOV_M_L: MOV_M_R(cpu, L);              break;
+    case OP_MVI_A:   MVI_R(cpu, A, operands[0]);   break;
+    case OP_MVI_B:   MVI_R(cpu, B, operands[0]);   break;
+    case OP_MVI_C:   MVI_R(cpu, C, operands[0]);   break;
+    case OP_MVI_D:   MVI_R(cpu, D, operands[0]);   break;
+    case OP_MVI_E:   MVI_R(cpu, E, operands[0]);   break;
+    case OP_MVI_H:   MVI_R(cpu, H, operands[0]);   break;
+    case OP_MVI_L:   MVI_R(cpu, L, operands[0]);   break;
+    case OP_MVI_M:   MVI_M(cpu, operands[0]);      break;
+    case OP_LXI_B: break;
+    case OP_LXI_D: break;
+    case OP_LXI_H: break;
+    case OP_LXI_SP: break;
+    case OP_LDA: break;
+    case OP_STA: break;
+    case OP_LHLD: break;
+    case OP_SHLD: break;
+    case OP_LDAX_B: break;
+    case OP_LDAX_D: break;
+    case OP_STAX_B: break;
+    case OP_STAX_D: break;
+    case OP_XCHG: break;
     
     /* Arithmetic Group */
-    case ADD_A:
-        // Do stuff
-        break;
-    case ADD_B:
-        // Do stuff
-        break;
-    case ADD_C:
-        // Do stuff
-        break;
-    case ADD_D:
-        // Do stuff
-        break;
-    case ADD_E:
-        // Do stuff
-        break;
-    case ADD_H:
-        // Do stuff
-        break;
-    case ADD_L:
-        // Do stuff
-        break;
-    case ADD_M:
-        // Do stuff
-        break;
-    case ADI:
-        // Do stuff
-        break;
-    case ADC_A:
-        // Do stuff
-        break;
-    case ADC_B:
-        // Do stuff
-        break;
-    case ADC_C:
-        // Do stuff
-        break;
-    case ADC_D:
-        // Do stuff
-        break;
-    case ADC_E:
-        // Do stuff
-        break;
-    case ADC_H:
-        // Do stuff
-        break;
-    case ADC_L:
-        // Do stuff
-        break;
-    case ADC_M:
-        // Do stuff
-        break;
-    case ACI:
-        // Do stuff
-        break;
-    case SUB_A:
-        // Do stuff
-        break;
-    case SUB_B:
-        // Do stuff
-        break;
-    case SUB_C:
-        // Do stuff
-        break;
-    case SUB_D:
-        // Do stuff
-        break;
-    case SUB_E:
-        // Do stuff
-        break;
-    case SUB_H:
-        // Do stuff
-        break;
-    case SUB_L:
-        // Do stuff
-        break;
-    case SUB_M:
-        // Do stuff
-        break;
-    case SUI:
-        // Do stuff
-        break;
-    case SBB_A:
-        // Do stuff
-        break;
-    case SBB_B:
-        // Do stuff
-        break;
-    case SBB_C:
-        // Do stuff
-        break;
-    case SBB_D:
-        // Do stuff
-        break;
-    case SBB_E:
-        // Do stuff
-        break;
-    case SBB_H:
-        // Do stuff
-        break;
-    case SBB_L:
-        // Do stuff
-        break;
-    case SBB_M:
-        // Do stuff
-        break;
-    case SBI:
-        // Do stuff
-        break;
-    case INR_A:
-        // Do stuff
-        break;
-    case INR_B:
-        // Do stuff
-        break;
-    case INR_C:
-        // Do stuff
-        break;
-    case INR_D:
-        // Do stuff
-        break;
-    case INR_E:
-        // Do stuff
-        break;
-    case INR_H:
-        // Do stuff
-        break;
-    case INR_L:
-        // Do stuff
-        break;
-    case INR_M:
-        // Do stuff
-        break;
-    case DCR_A:
-        // Do stuff
-        break;
-    case DCR_B:
-        // Do stuff
-        break;
-    case DCR_C:
-        // Do stuff
-        break;
-    case DCR_D:
-        // Do stuff
-        break;
-    case DCR_E:
-        // Do stuff
-        break;
-    case DCR_H:
-        // Do stuff
-        break;
-    case DCR_L:
-        // Do stuff
-        break;
-    case DCR_M:
-        // Do stuff
-        break;
-    case INX_B:
-        // Do stuff
-        break;
-    case INX_D:
-        // Do stuff
-        break;
-    case INX_H:
-        // Do stuff
-        break;
-    case INX_SP:
-        // Do stuff
-        break;
-    case DCX_B:
-        // Do stuff
-        break;
-    case DCX_D:
-        // Do stuff
-        break;
-    case DCX_H:
-        // Do stuff
-        break;
-    case DCX_SP:
-        // Do stuff
-        break;
-    case DAD_B:
-        // Do stuff
-        break;
-    case DAD_D:
-        // Do stuff
-        break;
-    case DAD_H:
-        // Do stuff
-        break;
-    case DAD_SP:
-        // Do stuff
-        break;
-    case DAA:
-        // Do stuff
-        break;
+    case OP_ADD_A: break;
+    case OP_ADD_B: break;
+    case OP_ADD_C: break;
+    case OP_ADD_D: break;
+    case OP_ADD_E: break;
+    case OP_ADD_H: break;
+    case OP_ADD_L: break;
+    case OP_ADD_M: break;
+    case OP_ADI: break;
+    case OP_ADC_A: break;
+    case OP_ADC_B: break;
+    case OP_ADC_C: break;
+    case OP_ADC_D: break;
+    case OP_ADC_E: break;
+    case OP_ADC_H: break;
+    case OP_ADC_L: break;
+    case OP_ADC_M: break;
+    case OP_ACI: break;
+    case OP_SUB_A: break;
+    case OP_SUB_B: break;
+    case OP_SUB_C: break;
+    case OP_SUB_D: break;
+    case OP_SUB_E: break;
+    case OP_SUB_H: break;
+    case OP_SUB_L: break;
+    case OP_SUB_M: break;
+    case OP_SUI: break;
+    case OP_SBB_A: break;
+    case OP_SBB_B: break;
+    case OP_SBB_C: break;
+    case OP_SBB_D: break;
+    case OP_SBB_E: break;
+    case OP_SBB_H: break;
+    case OP_SBB_L: break;
+    case OP_SBB_M: break;
+    case OP_SBI: break;
+    case OP_INR_A: break;
+    case OP_INR_B: break;
+    case OP_INR_C: break;
+    case OP_INR_D: break;
+    case OP_INR_E: break;
+    case OP_INR_H: break;
+    case OP_INR_L: break;
+    case OP_INR_M: break;
+    case OP_DCR_A: break;
+    case OP_DCR_B: break;
+    case OP_DCR_C: break;
+    case OP_DCR_D: break;
+    case OP_DCR_E: break;
+    case OP_DCR_H: break;
+    case OP_DCR_L: break;
+    case OP_DCR_M: break;
+    case OP_INX_B: break;
+    case OP_INX_D: break;
+    case OP_INX_H: break;
+    case OP_INX_SP: break;
+    case OP_DCX_B: break;
+    case OP_DCX_D: break;
+    case OP_DCX_H: break;
+    case OP_DCX_SP: break;
+    case OP_DAD_B: break;
+    case OP_DAD_D: break;
+    case OP_DAD_H: break;
+    case OP_DAD_SP: break;
+    case OP_DAA: break;
 
     /* Logical Group */
-    case ANA_A:
-        // Do stuff
-        break;
-    case ANA_B:
-        // Do stuff
-        break;
-    case ANA_C:
-        // Do stuff
-        break;
-    case ANA_D:
-        // Do stuff
-        break;
-    case ANA_E:
-        // Do stuff
-        break;
-    case ANA_H:
-        // Do stuff
-        break;
-    case ANA_L:
-        // Do stuff
-        break;
-    case ANA_M:
-        // Do stuff
-        break;
-    case ANI:
-        // Do stuff
-        break;
-    case XRA_A:
-        // Do stuff
-        break;
-    case XRA_B:
-        // Do stuff
-        break;
-    case XRA_C:
-        // Do stuff
-        break;
-    case XRA_D:
-        // Do stuff
-        break;
-    case XRA_E:
-        // Do stuff
-        break;
-    case XRA_H:
-        // Do stuff
-        break;
-    case XRA_L:
-        // Do stuff
-        break;
-    case XRA_M:
-        // Do stuff
-        break;
-    case XRI:
-        // Do stuff
-        break;
-    case ORA_A:
-        // Do stuff
-        break;
-    case ORA_B:
-        // Do stuff
-        break;
-    case ORA_C:
-        // Do stuff
-        break;
-    case ORA_D:
-        // Do stuff
-        break;
-    case ORA_E:
-        // Do stuff
-        break;
-    case ORA_H:
-        // Do stuff
-        break;
-    case ORA_L:
-        // Do stuff
-        break;
-    case ORA_M:
-        // Do stuff
-        break;
-    case ORI:
-        // Do stuff
-        break;
-    case CMP_A:
-        // Do stuff
-        break;
-    case CMP_B:
-        // Do stuff
-        break;
-    case CMP_C:
-        // Do stuff
-        break;
-    case CMP_D:
-        // Do stuff
-        break;
-    case CMP_E:
-        // Do stuff
-        break;
-    case CMP_H:
-        // Do stuff
-        break;
-    case CMP_L:
-        // Do stuff
-        break;
-    case CMP_M:
-        // Do stuff
-        break;
-    case CPI:
-        // Do stuff
-        break;
-    case RLC:
-        // Do stuff
-        break;
-    case RRC:
-        // Do stuff
-        break;
-    case RAL:
-        // Do stuff
-        break;
-    case RAR:
-        // Do stuff
-        break;
-    case CMA:
-        // Do stuff
-        break;
-    case CMC:
-        // Do stuff
-        break;
-    case STC:
-        // Do stuff
-        break;
+    case OP_ANA_A: break;
+    case OP_ANA_B: break;
+    case OP_ANA_C: break;
+    case OP_ANA_D: break;
+    case OP_ANA_E: break;
+    case OP_ANA_H: break;
+    case OP_ANA_L: break;
+    case OP_ANA_M: break;
+    case OP_ANI: break;
+    case OP_XRA_A: break;
+    case OP_XRA_B: break;
+    case OP_XRA_C: break;
+    case OP_XRA_D: break;
+    case OP_XRA_E: break;
+    case OP_XRA_H: break;
+    case OP_XRA_L: break;
+    case OP_XRA_M: break;
+    case OP_XRI: break;
+    case OP_ORA_A: break;
+    case OP_ORA_B: break;
+    case OP_ORA_C: break;
+    case OP_ORA_D: break;
+    case OP_ORA_E: break;
+    case OP_ORA_H: break;
+    case OP_ORA_L: break;
+    case OP_ORA_M: break;
+    case OP_ORI: break;
+    case OP_CMP_A: break;
+    case OP_CMP_B: break;
+    case OP_CMP_C: break;
+    case OP_CMP_D: break;
+    case OP_CMP_E: break;
+    case OP_CMP_H: break;
+    case OP_CMP_L: break;
+    case OP_CMP_M: break;
+    case OP_CPI: break;
+    case OP_RLC: break;
+    case OP_RRC: break;
+    case OP_RAL: break;
+    case OP_RAR: break;
+    case OP_CMA: break;
+    case OP_CMC: break;
+    case OP_STC: break;
 
     /* Branch Group */
-    case JMP:
-        // Do stuff
-        break;
-    case JNZ:
-        // Do stuff
-        break;
-    case JZ:
-        // Do stuff
-        break;
-    case JNC:
-        // Do stuff
-        break;
-    case JC:
-        // Do stuff
-        break;
-    case JPO:
-        // Do stuff
-        break;
-    case JPE:
-        // Do stuff
-        break;
-    case JP:
-        // Do stuff
-        break;
-    case JM:
-        // Do stuff
-        break;
-    case CALL:
-        // Do stuff
-        break;
-    case CNZ:
-        // Do stuff
-        break;
-    case CZ:
-        // Do stuff
-        break;
-    case CNC:
-        // Do stuff
-        break;
-    case CC:
-        // Do stuff
-        break;
-    case CPO:
-        // Do stuff
-        break;
-    case CPE:
-        // Do stuff
-        break;
-    case CP:
-        // Do stuff
-        break;
-    case CM:
-        // Do stuff
-        break;
-    case RET:
-        // Do stuff
-        break;
-    case RNZ:
-        // Do stuff
-        break;
-    case RZ:
-        // Do stuff
-        break;
-    case RNC:
-        // Do stuff
-        break;
-    case RC:
-        // Do stuff
-        break;
-    case RPO:
-        // Do stuff
-        break;
-    case RPE:
-        // Do stuff
-        break;
-    case RP:
-        // Do stuff
-        break;
-    case RM:
-        // Do stuff
-        break;
-    case RST_0:
-        // Do stuff
-        break;
-    case RST_1:
-        // Do stuff
-        break;
-    case RST_2:
-        // Do stuff
-        break;
-    case RST_3:
-        // Do stuff
-        break;
-    case RST_4:
-        // Do stuff
-        break;
-    case RST_5:
-        // Do stuff
-        break;
-    case RST_6:
-        // Do stuff
-        break;
-    case RST_7:
-        // Do stuff
-        break;
-    case PCHL:
-        // Do stuff
-        break;
+    case OP_JMP: break;
+    case OP_JNZ: break;
+    case OP_JZ: break;
+    case OP_JNC: break;
+    case OP_JC: break;
+    case OP_JPO: break;
+    case OP_JPE: break;
+    case OP_JP: break;
+    case OP_JM: break;
+    case OP_CALL: break;
+    case OP_CNZ: break;
+    case OP_CZ: break;
+    case OP_CNC: break;
+    case OP_CC: break;
+    case OP_CPO: break;
+    case OP_CPE: break;
+    case OP_CP: break;
+    case OP_CM: break;
+    case OP_RET: break;
+    case OP_RNZ: break;
+    case OP_RZ: break;
+    case OP_RNC: break;
+    case OP_RC: break;
+    case OP_RPO: break;
+    case OP_RPE: break;
+    case OP_RP: break;
+    case OP_RM: break;
+    case OP_RST_0: break;
+    case OP_RST_1: break;
+    case OP_RST_2: break;
+    case OP_RST_3: break;
+    case OP_RST_4: break;
+    case OP_RST_5: break;
+    case OP_RST_6: break;
+    case OP_RST_7: break;
+    case OP_PCHL: break;
     
     /* Stack/IO Group */
-    case PUSH_B:
-        // Do stuff
-        break;
-    case PUSH_D:
-        // Do stuff
-        break;
-    case PUSH_H:
-        // Do stuff
-        break;
-    case PUSH_PSW:
-        // Do stuff
-        break;
-    case POP_B:
-        // Do stuff
-        break;
-    case POP_D:
-        // Do stuff
-        break;
-    case POP_H:
-        // Do stuff
-        break;
-    case POP_PSW:
-        // Do stuff
-        break;
-    case XTHL:
-        // Do stuff
-        break;
-    case SPHL:
-        // Do stuff
-        break;
-    case IN:
-        // Do stuff
-        break;
-    case OUT:
-        // Do stuff
-        break;
-    case EI:
-        // Do stuff
-        break;
-    case DI:
-        // Do stuff
-        break;
-    case HLT:
-        // Do stuff
-        break;
-    case NOP:
-        printf("NOP!\n");
-        break;
-    case EXIT:
-        cpu->exit = true;
-        break;
+    case OP_PUSH_B: break;
+    case OP_PUSH_D: break;
+    case OP_PUSH_H: break;
+    case OP_PUSH_PSW: break;
+    case OP_POP_B: break;
+    case OP_POP_D: break;
+    case OP_POP_H: break;
+    case OP_POP_PSW: break;
+    case OP_XTHL: break;
+    case OP_SPHL: break;
+    case OP_IN: break;
+    case OP_OUT: break;
+    case OP_EI: break;
+    case OP_DI: break;
+    case OP_HLT: break;
+    case OP_NOP: printf("NOP!\n"); break;
+    case OP_EXIT: cpu->exit = true; break;
 
-    default:
-       fprintf(stderr, "Encountered undefined opcode.\n");
-       break;
+    default: fprintf(stderr, "Encountered undefined opcode.\n"); break;
     }
 }
