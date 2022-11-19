@@ -46,5 +46,8 @@ void ANI(CPU *cpu, uint8_t operand);
 void XRA_R(CPU *cpu, REGISTERS src);
 void XRA_M(CPU *cpu);
 void XRI(CPU *cpu, uint8_t operand);
+void ORA_R(CPU *cpu, REGISTERS src);
+void ORA_M(CPU *cpu);
+void ORI(CPU *cpu, uint8_t operand);
 
 #endif

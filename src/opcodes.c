@@ -376,3 +376,21 @@ void XRI(CPU *cpu, uint8_t operand) {
     _update_flags_or(cpu, res);
     cpu->reg[A] = res;
 }
+
+void ORA_R(CPU *cpu, REGISTERS src) {
+    uint8_t res = cpu->reg[A] | cpu->reg[src];
+    _update_flags_or(cpu, res);
+    cpu->reg[A] = res;
+}
+
+void ORA_M(CPU *cpu) {
+    uint8_t res = cpu->reg[A] | cpu->memory[cpu_get_reg_pair(cpu, H, L)];
+    _update_flags_or(cpu, res);
+    cpu->reg[A] = res;
+}
+
+void ORI(CPU *cpu, uint8_t operand) {
+    uint8_t res = cpu->reg[A] | operand;
+    _update_flags_or(cpu, res);
+    cpu->reg[A] = res;
+}
