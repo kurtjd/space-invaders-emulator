@@ -19,5 +19,15 @@ void STAX_RP(CPU *cpu, REGISTERS src);
 void XCHG(CPU *cpu);
 void ADD_R(CPU *cpu, REGISTERS src);
 void ADD_M(CPU *cpu);
+void ADI(CPU *cpu, uint8_t operand);
+void ADC_R(CPU *cpu, REGISTERS src);
+void ADC_M(CPU *cpu);
+void ACI(CPU *cpu, uint8_t operand);
+void SUB_R(CPU *cpu, REGISTERS src);
+void SUB_M(CPU *cpu);
+void SUI(CPU *cpu, uint8_t operand);
+void SBB_R(CPU *cpu, REGISTERS src);
+void SBB_M(CPU *cpu);
+void SBI(CPU *cpu, uint8_t operand);
 
 #endif

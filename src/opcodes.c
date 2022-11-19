@@ -92,6 +92,17 @@ static void _update_flags_add(CPU *cpu, uint8_t val1, uint8_t val2, bool carry) 
     _update_flag_cy_add(cpu, val1, val2, carry);
 }
 
+/* Called by subract-related opcodes that follow standard flag update behavior. */
+static void _update_flags_sub(CPU *cpu, uint8_t val1, uint8_t val2, bool carry) {
+    uint8_t res = val1 - val2;
+
+    _update_flag_z(cpu, res);
+    _update_flag_p(cpu, res);
+    _update_flag_s(cpu, res);
+    _update_flag_ac_sub(cpu, val1, val2, carry);
+    _update_flag_cy_sub(cpu, val1, val2, carry);
+}
+
 /* Simply swaps two values */
 static void _swap(uint8_t *a, uint8_t *b) {
     uint8_t tmp = *a;
@@ -170,4 +181,57 @@ void ADD_M(CPU *cpu) {
     uint8_t val = cpu->memory[cpu_get_reg_pair(cpu, H, L)];
     _update_flags_add(cpu, cpu->reg[A], val, false);
     cpu->reg[A] += val;
+}
+
+void ADI(CPU *cpu, uint8_t operand) {
+    _update_flags_add(cpu, cpu->reg[A], operand, false);
+    cpu->reg[A] += operand;
+}
+
+void ADC_R(CPU *cpu, REGISTERS src) {
+    _update_flags_add(cpu, cpu->reg[A], cpu->reg[src], true);
+    cpu->reg[A] += (cpu->reg[src] + cpu_get_flag_bit(cpu, CY));
+}
+
+void ADC_M(CPU *cpu) {
+    uint8_t val = cpu->memory[cpu_get_reg_pair(cpu, H, L)];
+    _update_flags_add(cpu, cpu->reg[A], val, true);
+    cpu->reg[A] += (val + cpu_get_flag_bit(cpu, CY));
+}
+
+void ACI(CPU *cpu, uint8_t operand) {
+    _update_flags_add(cpu, cpu->reg[A], operand, true);
+    cpu->reg[A] += (operand + cpu_get_flag_bit(cpu, CY));
+}
+
+void SUB_R(CPU *cpu, REGISTERS src) {
+    _update_flags_sub(cpu, cpu->reg[A], cpu->reg[src], false);
+    cpu->reg[A] -= cpu->reg[src];
+}
+
+void SUB_M(CPU *cpu) {
+    uint8_t val = cpu->memory[cpu_get_reg_pair(cpu, H, L)];
+    _update_flags_sub(cpu, cpu->reg[A], val, false);
+    cpu->reg[A] -= val;
+}
+
+void SUI(CPU *cpu, uint8_t operand) {
+    _update_flags_sub(cpu, cpu->reg[A], operand, false);
+    cpu->reg[A] -= operand;
+}
+
+void SBB_R(CPU *cpu, REGISTERS src) {
+    _update_flags_sub(cpu, cpu->reg[A], cpu->reg[src], true);
+    cpu->reg[A] -= (cpu->reg[src] + cpu_get_flag_bit(cpu, CY));
+}
+
+void SBB_M(CPU *cpu) {
+    uint8_t val = cpu->memory[cpu_get_reg_pair(cpu, H, L)];
+    _update_flags_sub(cpu, cpu->reg[A], val, true);
+    cpu->reg[A] -= (val + cpu_get_flag_bit(cpu, CY));
+}
+
+void SBI(CPU *cpu, uint8_t operand) {
+    _update_flags_sub(cpu, cpu->reg[A], operand, true);
+    cpu->reg[A] -= (operand + cpu_get_flag_bit(cpu, CY));
 }
