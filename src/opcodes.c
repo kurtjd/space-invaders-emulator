@@ -139,10 +139,20 @@ static void _update_flags_and(CPU *cpu, uint8_t val1, uint8_t val2) {
     cpu_set_flag_bit(cpu, AC, ((val1 | val2) >> 3) & 1);
 }
 
-/* Called by or-related opcodes that follow standard flag update behavior. */
+/* Called by or/xor-related opcodes that follow standard flag update behavior. */
 static void _update_flags_or(CPU *cpu, uint8_t val) {
     _update_flags_log(cpu, val);
     _clear_cy_ac(cpu);
+}
+
+/* Called by cmp-related opcodes that follow standard flag update behavior. */
+static void _update_flags_cmp(CPU *cpu, uint8_t val1, uint8_t val2) {
+    uint8_t res = val1 - val2;
+    _update_flag_z(cpu, res);
+    _update_flag_p(cpu, res);
+    _update_flag_s(cpu, res);
+    _update_flag_ac_sub(cpu, val1, val2, false);
+    _update_flag_cy_sub(cpu, val1, val2, false);
 }
 
 /* Simply swaps two values */
@@ -393,4 +403,16 @@ void ORI(CPU *cpu, uint8_t operand) {
     uint8_t res = cpu->reg[A] | operand;
     _update_flags_or(cpu, res);
     cpu->reg[A] = res;
+}
+
+void CMP_R(CPU *cpu, REGISTERS src) {
+    _update_flags_cmp(cpu, cpu->reg[A], cpu->reg[src]);
+}
+
+void CMP_M(CPU *cpu) {
+    _update_flags_cmp(cpu, cpu->reg[A], cpu->memory[cpu_get_reg_pair(cpu, H, L)]);
+}
+
+void CPI(CPU *cpu, uint8_t operand) {
+    _update_flags_cmp(cpu, cpu->reg[A], operand);
 }

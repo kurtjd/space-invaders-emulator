@@ -49,5 +49,8 @@ void XRI(CPU *cpu, uint8_t operand);
 void ORA_R(CPU *cpu, REGISTERS src);
 void ORA_M(CPU *cpu);
 void ORI(CPU *cpu, uint8_t operand);
+void CMP_R(CPU *cpu, REGISTERS src);
+void CMP_M(CPU *cpu);
+void CPI(CPU *cpu, uint8_t operand);
 
 #endif
