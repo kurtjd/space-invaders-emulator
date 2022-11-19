@@ -113,6 +113,16 @@ static void _update_flags_inc(CPU *cpu, uint8_t val) {
     _update_flag_ac_add(cpu, val, 1, false);
 }
 
+/* Called by dec-related opcodes that follow standard flag update behavior. */
+static void _update_flags_dec(CPU *cpu, uint8_t val) {
+    uint8_t res = val - 1;
+
+    _update_flag_z(cpu, res);
+    _update_flag_p(cpu, res);
+    _update_flag_s(cpu, res);
+    _update_flag_ac_sub(cpu, val, 1, false);
+}
+
 /* Simply swaps two values */
 static void _swap(uint8_t *a, uint8_t *b) {
     uint8_t tmp = *a;
@@ -254,4 +264,14 @@ void INR_R(CPU *cpu, REGISTERS dest) {
 void INR_M(CPU *cpu) {
     _update_flags_inc(cpu, cpu->memory[cpu_get_reg_pair(cpu, H, L)]);
     cpu->memory[cpu_get_reg_pair(cpu, H, L)]++;
+}
+
+void DCR_R(CPU *cpu, REGISTERS dest) {
+    _update_flags_dec(cpu, cpu->reg[dest]);
+    cpu->reg[dest]--;
+}
+
+void DCR_M(CPU *cpu) {
+    _update_flags_dec(cpu, cpu->memory[cpu_get_reg_pair(cpu, H, L)]);
+    cpu->memory[cpu_get_reg_pair(cpu, H, L)]--;
 }
