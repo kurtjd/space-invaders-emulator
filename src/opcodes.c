@@ -469,8 +469,8 @@ void JCC(CPU *cpu, FLAG_BITS flag, bool cmp, uint8_t operands[MAX_OPERANDS]) {
 }
 
 void CALL(CPU *cpu, uint8_t operands[MAX_OPERANDS]) {
-    cpu->memory[cpu->sp - 1] = cpu->pc >> 4;
-    cpu->memory[cpu->sp - 2] = cpu->pc & 0xF;
+    cpu->memory[cpu->sp - 1] = cpu->pc >> 8;
+    cpu->memory[cpu->sp - 2] = cpu->pc & 0xFF;
 
     cpu->sp -= 2;
     cpu->pc = (operands[1] << 8) | operands[0];

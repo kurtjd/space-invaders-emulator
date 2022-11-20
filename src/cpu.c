@@ -338,7 +338,7 @@ void cpu_reset(CPU *cpu) {
      * would be useful for running unit tests.
      */
     cpu->pc = 0;
-    cpu->sp = 0;
+    cpu->sp = 0xF000;
     for (int i = 0; i < NUM_REGS; i++) {
         cpu->reg[i] = 0;
     }
