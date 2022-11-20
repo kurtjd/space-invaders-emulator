@@ -554,15 +554,11 @@ void SPHL(CPU *cpu) {
 }
 
 void IN(CPU *cpu, uint8_t operand) {
-    // Come back to this
-    (void)cpu;
-    (void)operand;
+    cpu->reg[A] = cpu->input[operand];
 }
 
 void OUT(CPU *cpu, uint8_t operand) {
-    // Come back to this
-    (void)cpu;
-    (void)operand;
+    cpu->output[operand] = cpu->reg[A];
 }
 
 void EI(CPU *cpu) {
