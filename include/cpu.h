@@ -343,7 +343,7 @@ void cpu_init(CPU *cpu);
 void cpu_reset(CPU *cpu);
 
 // Loads a ROM file into memory
-bool cpu_load_rom(CPU *cpu, const char *filename);
+bool cpu_load_rom(CPU *cpu, const char *filename, uint16_t start_addr);
 
 // Retrieves the specified flag bit
 bool cpu_get_flag_bit(const CPU *cpu, FLAG_BITS flag);

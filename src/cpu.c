@@ -338,7 +338,7 @@ void cpu_reset(CPU *cpu) {
      * would be useful for running unit tests.
      */
     cpu->pc = 0;
-    cpu->sp = 0xF000;
+    cpu->sp = 0;
     for (int i = 0; i < NUM_REGS; i++) {
         cpu->reg[i] = 0;
     }
@@ -354,11 +354,11 @@ void cpu_reset(CPU *cpu) {
     cpu->halt = false;
 }
 
-bool cpu_load_rom(CPU *cpu, const char *filename) {
+bool cpu_load_rom(CPU *cpu, const char *filename, uint16_t start_addr) {
     FILE *rom = fopen(filename, "rb");
 
     if (rom) {
-        fread(cpu->memory, MAX_MEM, 1, rom);
+        fread(cpu->memory + start_addr, MAX_MEM, 1, rom);
         fclose(rom);
         return true;
     }
