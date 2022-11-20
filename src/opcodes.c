@@ -566,13 +566,11 @@ void OUT(CPU *cpu, uint8_t operand) {
 }
 
 void EI(CPU *cpu) {
-    // Come back to this
-    (void)cpu;
+    cpu->int_enable = true;
 }
 
 void DI(CPU *cpu) {
-    // Come back to this
-    (void)cpu;
+    cpu->int_enable = false;
 }
 
 void HLT(CPU *cpu) {
@@ -587,6 +585,7 @@ void EXIT(CPU *cpu) {
     cpu->exit = true;
 }
 
-void UNDEFINED(void) {
+void UNDEFINED(CPU *cpu) {
     fprintf(stderr, "Encountered undefined opcode.\n");
+    EXIT(cpu);
 }

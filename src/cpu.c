@@ -349,6 +349,7 @@ void cpu_reset(CPU *cpu) {
     }
 
     // Reset any helper variables
+    cpu->int_enable = false;
     cpu->exit = false;
     cpu->halt = false;
 }
@@ -666,6 +667,6 @@ void cpu_tick(CPU *cpu) {
     case OP_EXIT:       EXIT(cpu);                    break;
 
     /* Handle undefined opcode encounters */
-    default:            UNDEFINED();                  break;
+    default:            UNDEFINED(cpu);                  break;
     }
 }

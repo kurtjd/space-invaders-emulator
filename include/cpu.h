@@ -330,6 +330,7 @@ typedef struct CPU {
     uint8_t output[NUM_IO];
 
     // Helper stuff
+    bool int_enable;
     bool exit; // Signals main to exit loop
     bool halt; // Signals CPU to halt until interrupt
 } CPU;

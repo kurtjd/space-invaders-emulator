@@ -80,6 +80,6 @@ void DI(CPU *cpu);
 void HLT(CPU *cpu);
 void NOP(void);
 void EXIT(CPU *cpu);
-void UNDEFINED(void);
+void UNDEFINED(CPU *cpu);
 
 #endif
