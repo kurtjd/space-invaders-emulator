@@ -331,6 +331,7 @@ typedef struct CPU {
 
     // Helper stuff
     bool exit; // Signals main to exit loop
+    bool halt; // Signals CPU to halt until interrupt
 } CPU;
 
 

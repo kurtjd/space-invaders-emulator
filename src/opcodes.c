@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "opcodes.h"
 
 /* Unfortunately, unlike the other status flags, CY and AC are manipulated
@@ -502,4 +503,90 @@ void RST_N(CPU *cpu, uint8_t n) {
 
 void PCHL(CPU *cpu) {
     cpu->pc = cpu_get_reg_pair(cpu, H, L);
+}
+
+void PUSH_RP(CPU *cpu, REGISTERS src) {
+    cpu->memory[cpu->sp - 1] = cpu->reg[src];
+    cpu->memory[cpu->sp - 2] = cpu->reg[src + 1];
+
+    cpu->sp -= 2;
+}
+
+void PUSH_PSW(CPU *cpu) {
+    cpu->memory[cpu->sp - 1] = cpu->reg[A];
+    cpu->memory[cpu->sp - 2] = (cpu_get_flag_bit(cpu, S) << 7)
+                             | (cpu_get_flag_bit(cpu, Z) << 6)
+                             | (cpu_get_flag_bit(cpu, AC) << 4)
+                             | (cpu_get_flag_bit(cpu, P) << 2)
+                             | (1 << 1)
+                             | (cpu_get_flag_bit(cpu, CY));
+    
+    cpu->sp -= 2;
+}
+
+void POP_RP(CPU *cpu, REGISTERS src) {
+    cpu->reg[src + 1] = cpu->memory[cpu->sp];
+    cpu->reg[src] = cpu->memory[cpu->sp + 1];
+
+    cpu->sp += 2;
+}
+
+void POP_PSW(CPU *cpu) {
+    uint8_t psw = cpu->memory[cpu->sp];
+
+    cpu_set_flag_bit(cpu, CY, psw & 1);
+    cpu_set_flag_bit(cpu, P, psw & (1 << 2));
+    cpu_set_flag_bit(cpu, AC, psw & (1 << 4));
+    cpu_set_flag_bit(cpu, Z, psw & (1 << 6));
+    cpu_set_flag_bit(cpu, S, psw & (1 << 7));
+
+    cpu->reg[A] = cpu->memory[cpu->sp + 1];
+    cpu->sp += 2;
+}
+
+void XTHL(CPU *cpu) {
+    _swap(&cpu->reg[L], &cpu->memory[cpu->sp]);
+    _swap(&cpu->reg[H], &cpu->memory[cpu->sp + 1]);
+}
+
+void SPHL(CPU *cpu) {
+    cpu->sp = cpu_get_reg_pair(cpu, H, L);
+}
+
+void IN(CPU *cpu, uint8_t operand) {
+    // Come back to this
+    (void)cpu;
+    (void)operand;
+}
+
+void OUT(CPU *cpu, uint8_t operand) {
+    // Come back to this
+    (void)cpu;
+    (void)operand;
+}
+
+void EI(CPU *cpu) {
+    // Come back to this
+    (void)cpu;
+}
+
+void DI(CPU *cpu) {
+    // Come back to this
+    (void)cpu;
+}
+
+void HLT(CPU *cpu) {
+    cpu->halt = true;
+}
+
+void NOP(void) {
+    // No operation (but function exists incase want to do something else)
+}
+
+void EXIT(CPU *cpu) {
+    cpu->exit = true;
+}
+
+void UNDEFINED(void) {
+    fprintf(stderr, "Encountered undefined opcode.\n");
 }

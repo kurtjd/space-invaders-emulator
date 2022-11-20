@@ -67,5 +67,19 @@ void RET(CPU *cpu);
 void RCC(CPU *cpu, FLAG_BITS flag, bool cmp);
 void RST_N(CPU *cpu, uint8_t n);
 void PCHL(CPU *cpu);
+void PUSH_RP(CPU *cpu, REGISTERS src);
+void PUSH_PSW(CPU *cpu);
+void POP_RP(CPU *cpu, REGISTERS src);
+void POP_PSW(CPU *cpu);
+void XTHL(CPU *cpu);
+void SPHL(CPU *cpu);
+void IN(CPU *cpu, uint8_t operand);
+void OUT(CPU *cpu, uint8_t operand);
+void EI(CPU *cpu);
+void DI(CPU *cpu);
+void HLT(CPU *cpu);
+void NOP(void);
+void EXIT(CPU *cpu);
+void UNDEFINED(void);
 
 #endif
