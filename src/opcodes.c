@@ -350,17 +350,23 @@ void DAD_SP(CPU *cpu) {
 }
 
 void DAA(CPU *cpu) {
-    // Complicated. Come back to this one.
-
-    if (cpu_get_flag_bit(cpu, AC) || ((cpu->reg[A] & 0xF) > 9)) {
-        cpu->reg[A] += 6;
+    if (cpu_get_flag_bit(cpu, AC) || ((cpu->reg[A] & 0xF) > 0x9)) {
+        cpu->reg[A] += 0x06;
+        cpu_set_flag_bit(cpu, AC, 1);
+    } else {
+        cpu_set_flag_bit(cpu, AC, 0);
     }
 
-    if (cpu_get_flag_bit(cpu, CY) || ((cpu->reg[A] >> 4) > 9)) {
-        uint8_t lsb = cpu->reg[A] & 0xF;
-        uint8_t msb = (cpu->reg[A] >> 4) + 6;
-        cpu->reg[A] = (msb << 4) | lsb;
+    if (cpu_get_flag_bit(cpu, CY) || ((cpu->reg[A] >> 4) > 0x9)) {
+        cpu->reg[A] += 0x60;
+        cpu_set_flag_bit(cpu, CY, 1);
+    } else {
+        cpu_set_flag_bit(cpu, CY, 0);
     }
+
+    _update_flag_p(cpu, cpu->reg[A]);
+    _update_flag_z(cpu, cpu->reg[A]);
+    _update_flag_s(cpu, cpu->reg[A]);
 }
 
 void ANA_R(CPU *cpu, REGISTERS src) {
