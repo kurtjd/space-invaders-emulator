@@ -350,16 +350,16 @@ void DAD_SP(CPU *cpu) {
 
 void DAA(CPU *cpu) {
     uint8_t val = 0;
+    uint8_t msb = cpu->reg[A] >> 4;
+    uint8_t lsb = cpu->reg[A] & 0xF;
 
-    if (cpu_get_flag_bit(cpu, AC) || ((cpu->reg[A] & 0xF) > 9)) {
+    if (cpu_get_flag_bit(cpu, AC) || (lsb > 9)) {
         val += 0x06;
     }
 
-    if (cpu_get_flag_bit(cpu, CY) || ((cpu->reg[A] >> 4) > 9)) {
+    if (cpu_get_flag_bit(cpu, CY) || (msb > 9) || (msb >= 9 && lsb > 9)) {
         val += 0x60;
         cpu_set_flag_bit(cpu, CY, 1);
-    } else {
-        cpu_set_flag_bit(cpu, CY, 0);
     }
 
     uint8_t res = cpu->reg[A] + val;

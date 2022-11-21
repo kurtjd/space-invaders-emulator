@@ -20,3 +20,4 @@ Exactly what it sounds like.
 [Intel 8080 User/Assembly Manuals](docs)  
 [Computer Archaeology](https://www.computerarcheology.com/Arcade/SpaceInvaders/)  
 [Emulator 101](http://www.emulator101.com/welcome.html)  
+[Superzazu's Implementation (for tests and debugging)](https://github.com/superzazu/8080)
