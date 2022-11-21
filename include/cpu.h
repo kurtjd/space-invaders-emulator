@@ -375,6 +375,9 @@ void cpu_set_reg_pair(CPU *cpu, REGISTERS reg1, REGISTERS reg2, uint16_t val);
 // Returns the status word of the CPU
 uint8_t cpu_get_sw(const CPU *cpu);
 
+// Generates an interrupt request
+void cpu_interrupt(CPU *cpu, uint8_t int_num);
+
 // Executes the next instruction
 void cpu_tick(CPU *cpu);
 

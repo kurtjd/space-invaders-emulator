@@ -656,6 +656,10 @@ uint8_t cpu_get_sw(const CPU *cpu) {
          | (cpu_get_flag_bit(cpu, CY));
 }
 
+void cpu_interrupt(CPU *cpu, uint8_t int_num) {
+    RST_N(cpu, int_num);
+}
+
 void cpu_tick(CPU *cpu) {
     if (cpu->instr_complete) {
         uint8_t opcode = cpu->memory[cpu->pc];
