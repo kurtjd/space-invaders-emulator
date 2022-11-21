@@ -349,23 +349,26 @@ void DAD_SP(CPU *cpu) {
 }
 
 void DAA(CPU *cpu) {
-    if (cpu_get_flag_bit(cpu, AC) || ((cpu->reg[A] & 0xF) > 0x9)) {
-        cpu->reg[A] += 0x06;
-        cpu_set_flag_bit(cpu, AC, 1);
-    } else {
-        cpu_set_flag_bit(cpu, AC, 0);
+    uint8_t val = 0;
+
+    if (cpu_get_flag_bit(cpu, AC) || ((cpu->reg[A] & 0xF) > 9)) {
+        val += 0x06;
     }
 
-    if (cpu_get_flag_bit(cpu, CY) || ((cpu->reg[A] >> 4) > 0x9)) {
-        cpu->reg[A] += 0x60;
+    if (cpu_get_flag_bit(cpu, CY) || ((cpu->reg[A] >> 4) > 9)) {
+        val += 0x60;
         cpu_set_flag_bit(cpu, CY, 1);
     } else {
         cpu_set_flag_bit(cpu, CY, 0);
     }
 
-    _update_flag_p(cpu, cpu->reg[A]);
-    _update_flag_z(cpu, cpu->reg[A]);
-    _update_flag_s(cpu, cpu->reg[A]);
+    uint8_t res = cpu->reg[A] + val;
+    _update_flag_p(cpu, res);
+    _update_flag_z(cpu, res);
+    _update_flag_s(cpu, res);
+    _update_flag_ac_add(cpu, cpu->reg[A], val, false);
+
+    cpu->reg[A] = res;
 }
 
 void ANA_R(CPU *cpu, REGISTERS src) {
@@ -381,7 +384,6 @@ void ANA_M(CPU *cpu) {
 
 void ANI(CPU *cpu, uint8_t operand) {
     _update_flags_and(cpu, cpu->reg[A], operand);
-    cpu_set_flag_bit(cpu, AC, false); // This particular AND clears AC
     cpu->reg[A] &= operand;
 }
 

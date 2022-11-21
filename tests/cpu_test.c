@@ -31,7 +31,7 @@ int main(void) {
     CPU cpu;
     cpu_init(&cpu);
 
-    cpu_load_rom(&cpu, "../roms/tests/8080PRE.COM", 0x100);
+    cpu_load_rom(&cpu, "../roms/tests/CPUTEST.COM", 0x100);
     cpu.pc = 0x100;
     cpu.memory[PRINT_ADDR] = 0xd3;
     cpu.memory[PRINT_ADDR + 2] = 0xc9;
@@ -39,7 +39,7 @@ int main(void) {
 
     while(!cpu.exit) {
         if (cpu.instr_complete) {
-            debug(&cpu);
+            //debug(&cpu);
 
             if (cpu.pc == PRINT_ADDR) {
                 PRINT(&cpu);
