@@ -1,5 +1,5 @@
 # Intel 8080 Emulator
-<img src = "https://d23gn3985hkc32.cloudfront.net/wp-content/uploads/2020/12/478638-h1.jpg">
+<img src = "https://www.clipartmax.com/png/small/168-1683610_space-invaders-icon-space-invaders-png.png">
 Exactly what it sounds like.
 
 ## Build
@@ -9,12 +9,10 @@ Exactly what it sounds like.
 
 ## Run
 ### Linux
-`./intel-8080-emu`  
-`./intel-8080-tests` (for unit tests)
+`./intel-8080-tests`
 
 ### Windows
-`intel-8080-emu.exe`  
-`intel-8080-tests.exe` (for unit tests)
+`intel-8080-tests.exe`
 
 ## References
 [Intel 8080 User/Assembly Manuals](docs)  
