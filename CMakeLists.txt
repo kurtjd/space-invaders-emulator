@@ -5,14 +5,6 @@ project(Intel-8080-Emulator
     DESCRIPTION "Space Invaders and Stuff!"
     LANGUAGES C)
 
-add_executable("intel-8080-emu"
-    src/main.c
-    src/opcodes.c
-    src/cpu.c)
-
-target_include_directories("intel-8080-emu" PUBLIC include)
-target_compile_options("intel-8080-emu" PRIVATE -Wall -Wextra -Wpedantic -Wno-unused-variable -Wno-unused-function -Wno-unused-result -std=c99)
-
 add_executable("intel-8080-tests"
     tests/cpu_test.c
     src/opcodes.c

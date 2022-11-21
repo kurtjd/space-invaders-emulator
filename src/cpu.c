@@ -945,6 +945,8 @@ void cpu_tick(CPU *cpu) {
         cpu->cycle_cum = 1;
     }
 
+    /* Wait for current instruction to complete before
+     * moving to next instruction. */
     if (cpu->cycle_cum < cpu->instr_cycles) {
         cpu->cycle_cum++;
     } else {
