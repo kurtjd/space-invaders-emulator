@@ -489,6 +489,7 @@ void CALL(CPU *cpu, uint8_t operands[MAX_OPERANDS]) {
 void CCC(CPU *cpu, FLAG_BITS flag, bool cmp, uint8_t operands[MAX_OPERANDS]) {
     if (cpu_get_flag_bit(cpu, flag) == cmp) {
         CALL(cpu, operands);
+        cpu->instr_cycles += 6;
     }
 }
 
@@ -500,6 +501,7 @@ void RET(CPU *cpu) {
 void RCC(CPU *cpu, FLAG_BITS flag, bool cmp) {
     if (cpu_get_flag_bit(cpu, flag) == cmp) {
         RET(cpu);
+        cpu->instr_cycles += 6;
     }
 }
 
