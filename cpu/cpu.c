@@ -657,7 +657,23 @@ uint8_t cpu_get_sw(const CPU *cpu) {
 }
 
 void cpu_interrupt(CPU *cpu, uint8_t int_num) {
-    RST_N(cpu, int_num);
+    /* Wait for cur instruction to complete? */
+    if (cpu_get_flag_bit(cpu, I)) {
+        RST_N(cpu, int_num);
+        cpu_set_flag_bit(cpu, I, false);
+    }
+}
+
+void cpu_print_debug(const CPU *cpu) {
+    printf("PC: %04X, AF: %04X, BC: %04X, DE: %04X, HL: %04X, SP: %04X, CYC: %d (%s)\n",
+          cpu->pc,
+          (cpu->reg[A] << 8) | cpu_get_sw(cpu),
+          (cpu->reg[B] << 8) | cpu->reg[C],
+          (cpu->reg[D] << 8) | cpu->reg[E],
+          (cpu->reg[H] << 8) | cpu->reg[L],
+          cpu->sp,
+          cpu->total_cycles,
+          opcode_str[cpu->memory[cpu->pc]]);
 }
 
 void cpu_tick(CPU *cpu) {

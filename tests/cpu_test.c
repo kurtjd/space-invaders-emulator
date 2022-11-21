@@ -19,19 +19,6 @@ void PRINT(const CPU *cpu) {
     }
 }
 
-/* Prints useful debug information. */
-void print_debug(CPU *cpu) {
-    printf("PC: %04X, AF: %04X, BC: %04X, DE: %04X, HL: %04X, SP: %04X, CYC: %d (%s)\n",
-          cpu->pc,
-          (cpu->reg[A] << 8) | cpu_get_sw(cpu),
-          (cpu->reg[B] << 8) | cpu->reg[C],
-          (cpu->reg[D] << 8) | cpu->reg[E],
-          (cpu->reg[H] << 8) | cpu->reg[L],
-          cpu->sp,
-          cpu->total_cycles,
-          opcode_str[cpu->memory[cpu->pc]]);
-}
-
 /* Runs a test ROM. */
 void run_test(const char *filename, int test_num) {
     printf("TEST %d:\n", test_num);
@@ -56,7 +43,7 @@ void run_test(const char *filename, int test_num) {
     while(!cpu.exit) {
         if (cpu.instr_complete) {
             if (debug) {
-                print_debug(&cpu);
+                cpu_print_debug(&cpu);
             }
 
             // If the print function is called by ROM, explicitly call it here

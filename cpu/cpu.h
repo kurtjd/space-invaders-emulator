@@ -344,9 +344,9 @@ typedef struct CPU {
     // Helper stuff
     bool exit; // Signals main to exit loop
     bool halt; // Signals CPU to halt until interrupt
-    int total_cycles;
-    int instr_cycles;
-    int cycle_cum;
+    uint32_t total_cycles;
+    uint32_t instr_cycles;
+    uint32_t cycle_cum;
     bool instr_complete;
 } CPU;
 
@@ -377,6 +377,9 @@ uint8_t cpu_get_sw(const CPU *cpu);
 
 // Generates an interrupt request
 void cpu_interrupt(CPU *cpu, uint8_t int_num);
+
+// Prints useful debug information
+void cpu_print_debug(const CPU *cpu);
 
 // Executes the next instruction
 void cpu_tick(CPU *cpu);

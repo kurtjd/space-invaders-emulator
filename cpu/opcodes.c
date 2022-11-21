@@ -537,8 +537,8 @@ void RCC(CPU *cpu, FLAG_BITS flag, bool cmp) {
 }
 
 void RST_N(CPU *cpu, uint8_t n) {
-    cpu->memory[(uint16_t)(cpu->sp - 1)] = cpu->pc >> 4;
-    cpu->memory[(uint16_t)(cpu->sp - 2)] = cpu->pc & 0xF;
+    cpu->memory[(uint16_t)(cpu->sp - 1)] = cpu->pc >> 8;
+    cpu->memory[(uint16_t)(cpu->sp - 2)] = cpu->pc & 0xFF;
 
     cpu->sp -= 2;
     cpu->pc = 8 * n;
@@ -619,6 +619,6 @@ void EXIT(CPU *cpu) {
 }
 
 void UNDEFINED(CPU *cpu) {
-    fprintf(stderr, "Encountered undefined opcode.\n");
+    fprintf(stderr, "Encountered undefined opcode at cycle %d.\n", cpu->total_cycles);
     EXIT(cpu);
 }
