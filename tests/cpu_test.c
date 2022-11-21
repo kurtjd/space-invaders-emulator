@@ -31,7 +31,7 @@ int main(void) {
     CPU cpu;
     cpu_init(&cpu);
 
-    cpu_load_rom(&cpu, "../roms/tests/CPUTEST.COM", 0x100);
+    cpu_load_rom(&cpu, "../roms/tests/8080EXM.COM", 0x100);
     cpu.pc = 0x100;
     cpu.memory[PRINT_ADDR] = 0xd3;
     cpu.memory[PRINT_ADDR + 2] = 0xc9;

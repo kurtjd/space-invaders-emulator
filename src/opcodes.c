@@ -438,33 +438,57 @@ void CPI(CPU *cpu, uint8_t operand) {
 void RLC(CPU *cpu) {
     uint8_t msb = cpu->reg[A] >> 7;
     cpu->reg[A] <<= 1;
-    cpu->reg[A] |= msb;
+
+    if (msb) {
+        cpu->reg[A] |= 1;
+    } else {
+        cpu->reg[A] &= ~1;
+    }
+
     cpu_set_flag_bit(cpu, CY, msb);
 }
 
 void RRC(CPU *cpu) {
     uint8_t lsb = cpu->reg[A] & 1;
     cpu->reg[A] >>= 1;
-    cpu->reg[A] |= (lsb << 7);
+
+    if (lsb) {
+        cpu->reg[A] |= (1 << 7);
+    } else {
+        cpu->reg[A] &= ~(1 << 7);
+    }
+
     cpu_set_flag_bit(cpu, CY, lsb);
 }
 
 void RAL(CPU *cpu) {
     uint8_t msb = cpu->reg[A] >> 7;
     cpu->reg[A] <<= 1;
-    cpu->reg[A] |= cpu_get_flag_bit(cpu, CY);
+
+    if (cpu_get_flag_bit(cpu, CY)) {
+        cpu->reg[A] |= 1;
+    } else {
+        cpu->reg[A] &= ~1;
+    }
+
     cpu_set_flag_bit(cpu, CY, msb);
 }
 
 void RAR(CPU *cpu) {
     uint8_t lsb = cpu->reg[A] & 1;
     cpu->reg[A] >>= 1;
-    cpu->reg[A] |= cpu_get_flag_bit(cpu, CY);
+
+    if (cpu_get_flag_bit(cpu, CY)) {
+        cpu->reg[A] |= (1 << 7);
+    } else {
+        cpu->reg[A] &= ~(1 << 7);
+    }
+
     cpu_set_flag_bit(cpu, CY, lsb);
 }
 
 void CMA(CPU *cpu) {
-    cpu->reg[A] ^= 0xFF;
+    cpu->reg[A] = ~cpu->reg[A];
 }
 
 void CMC(CPU *cpu) {
