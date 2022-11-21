@@ -17,6 +17,10 @@
  */
 extern const char *opcode_str[NUM_OPCODES];
 
+/* This array maps opcodes to their number of cycles.
+*/
+extern const int opcode_cycles[NUM_OPCODES];
+
 /* Maps each opcode to its size in bytes. Technically opcodes are 1 byte but
  * they may expect 1-2 bytes as "operands".
  */
@@ -306,12 +310,20 @@ typedef enum {
  * There doesn't appear to be a specific bit mapping of flags so I think
  * it's just left up to us.
  */
-typedef enum {
+/*typedef enum {
     CY = 1 << 0,  // Carry Bit
     AC = 1 << 1,  // Aux Carry Bit
     S =  1 << 2,  // Sign Bit
     Z =  1 << 3,  // Zero Bit
     P =  1 << 4   // Parity Bit
+} FLAG_BITS;*/
+typedef enum {
+    S   = 1 << 5,  // Sign Bit
+    Z   = 1 << 4,  // Zero Bit
+    AC  = 1 << 3,  // Aux Carry Bit
+    P   = 1 << 2,  // Parity Bit
+    CY  = 1 << 1,  // Carry Bit
+    I   = 1 << 0   // Interrupt Bit
 } FLAG_BITS;
 
 
@@ -330,9 +342,12 @@ typedef struct CPU {
     uint8_t output[NUM_IO];
 
     // Helper stuff
-    bool int_enable;
     bool exit; // Signals main to exit loop
     bool halt; // Signals CPU to halt until interrupt
+    int total_cycles;
+    int last_instr_cycles;
+    int cycle_cum;
+    bool instr_complete;
 } CPU;
 
 
@@ -356,6 +371,9 @@ uint16_t cpu_get_reg_pair(const CPU *cpu, REGISTERS reg1, REGISTERS reg2);
 
 // Given a uint16_t, places the MSB in reg1 and the LSB in reg2
 void cpu_set_reg_pair(CPU *cpu, REGISTERS reg1, REGISTERS reg2, uint16_t val);
+
+// Returns the status word of the CPU
+uint8_t cpu_get_sw(const CPU *cpu);
 
 // Executes the next instruction
 void cpu_tick(CPU *cpu);

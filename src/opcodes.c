@@ -17,7 +17,8 @@
  */
 static void _update_flag_cy_add(CPU *cpu, uint8_t val1, uint8_t val2, bool add_carry) {
     int carry = add_carry ? cpu_get_flag_bit(cpu, CY) : 0;
-    cpu_set_flag_bit(cpu, CY, val1 + val2 + carry > 0xFF);
+    uint16_t res = val1 + val2 + carry;
+    cpu_set_flag_bit(cpu, CY, res > 0xFF);
 }
 
 /* Adds the first four bits of two values (plus the CY flag if wanted) and
@@ -35,7 +36,9 @@ static void _update_flag_ac_add(CPU *cpu, uint8_t val1, uint8_t val2, bool add_c
  */
 static void _update_flag_cy_sub(CPU *cpu, uint8_t val1, uint8_t val2, bool sub_borrow) {
     int borrow = sub_borrow ? cpu_get_flag_bit(cpu, CY) : 0;
-    cpu_set_flag_bit(cpu, CY, val1 + (~(val2 + borrow) + 1) > 0xFF);
+    //cpu_set_flag_bit(cpu, CY, val1 + (~(val2 + borrow) + 1) > 0xFF);
+    uint16_t res = val1 + ~val2 + !borrow;
+    cpu_set_flag_bit(cpu, CY, res > 0xFF);
 }
 
 /* Subtracts the first four bits of the second value from the first four bits
@@ -46,8 +49,9 @@ static void _update_flag_cy_sub(CPU *cpu, uint8_t val1, uint8_t val2, bool sub_b
 static void _update_flag_ac_sub(CPU *cpu, uint8_t val1, uint8_t val2, bool sub_borrow) {
     int borrow = sub_borrow ? cpu_get_flag_bit(cpu, CY) : 0;
     val1 &= 0xF;
-    val2 = ~((val2 & 0xF) + borrow) + 1;
-    cpu_set_flag_bit(cpu, AC, val1 + val2 > 0xF);
+    //val2 = ~((val2 & 0xF) + borrow) + 1;
+    val2 = (~val2) & 0xF;
+    cpu_set_flag_bit(cpu, AC, (val1 + val2 + !borrow) > 0xF);
 }
 
 /* Simply sets the CY and AC flags low. */
@@ -84,7 +88,7 @@ static void _update_flag_p(CPU *cpu, uint8_t res) {
 
 /* Called by add-related opcodes that follow standard flag update behavior. */
 static void _update_flags_add(CPU *cpu, uint8_t val1, uint8_t val2, bool carry) {
-    uint8_t res = val1 + val2;
+    uint8_t res = val1 + val2 + (carry ? cpu_get_flag_bit(cpu, CY) : 0);
 
     _update_flag_z(cpu, res);
     _update_flag_p(cpu, res);
@@ -95,7 +99,7 @@ static void _update_flags_add(CPU *cpu, uint8_t val1, uint8_t val2, bool carry) 
 
 /* Called by subract-related opcodes that follow standard flag update behavior. */
 static void _update_flags_sub(CPU *cpu, uint8_t val1, uint8_t val2, bool carry) {
-    uint8_t res = val1 - val2;
+    uint8_t res = val1 - val2 - (carry ? cpu_get_flag_bit(cpu, CY) : 0);
 
     _update_flag_z(cpu, res);
     _update_flag_p(cpu, res);
@@ -242,19 +246,22 @@ void ADI(CPU *cpu, uint8_t operand) {
 }
 
 void ADC_R(CPU *cpu, REGISTERS src) {
+    bool carry = cpu_get_flag_bit(cpu, CY);
     _update_flags_add(cpu, cpu->reg[A], cpu->reg[src], true);
-    cpu->reg[A] += (cpu->reg[src] + cpu_get_flag_bit(cpu, CY));
+    cpu->reg[A] += (cpu->reg[src] + carry);
 }
 
 void ADC_M(CPU *cpu) {
     uint8_t val = cpu->memory[cpu_get_reg_pair(cpu, H, L)];
+    bool carry = cpu_get_flag_bit(cpu, CY);
     _update_flags_add(cpu, cpu->reg[A], val, true);
-    cpu->reg[A] += (val + cpu_get_flag_bit(cpu, CY));
+    cpu->reg[A] += (val + carry);
 }
 
 void ACI(CPU *cpu, uint8_t operand) {
+    bool carry = cpu_get_flag_bit(cpu, CY);
     _update_flags_add(cpu, cpu->reg[A], operand, true);
-    cpu->reg[A] += (operand + cpu_get_flag_bit(cpu, CY));
+    cpu->reg[A] += (operand + carry);
 }
 
 void SUB_R(CPU *cpu, REGISTERS src) {
@@ -274,19 +281,22 @@ void SUI(CPU *cpu, uint8_t operand) {
 }
 
 void SBB_R(CPU *cpu, REGISTERS src) {
+    bool carry = cpu_get_flag_bit(cpu, CY);
     _update_flags_sub(cpu, cpu->reg[A], cpu->reg[src], true);
-    cpu->reg[A] -= (cpu->reg[src] + cpu_get_flag_bit(cpu, CY));
+    cpu->reg[A] -= (cpu->reg[src] + carry);
 }
 
 void SBB_M(CPU *cpu) {
     uint8_t val = cpu->memory[cpu_get_reg_pair(cpu, H, L)];
+    bool carry = cpu_get_flag_bit(cpu, CY);
     _update_flags_sub(cpu, cpu->reg[A], val, true);
-    cpu->reg[A] -= (val + cpu_get_flag_bit(cpu, CY));
+    cpu->reg[A] -= (val + carry);
 }
 
 void SBI(CPU *cpu, uint8_t operand) {
+    bool carry = cpu_get_flag_bit(cpu, CY);
     _update_flags_sub(cpu, cpu->reg[A], operand, true);
-    cpu->reg[A] -= (operand + cpu_get_flag_bit(cpu, CY));
+    cpu->reg[A] -= (operand + carry);
 }
 
 void INR_R(CPU *cpu, REGISTERS dest) {
@@ -514,13 +524,7 @@ void PUSH_RP(CPU *cpu, REGISTERS src) {
 
 void PUSH_PSW(CPU *cpu) {
     cpu->memory[cpu->sp - 1] = cpu->reg[A];
-    cpu->memory[cpu->sp - 2] = (cpu_get_flag_bit(cpu, S) << 7)
-                             | (cpu_get_flag_bit(cpu, Z) << 6)
-                             | (cpu_get_flag_bit(cpu, AC) << 4)
-                             | (cpu_get_flag_bit(cpu, P) << 2)
-                             | (1 << 1)
-                             | (cpu_get_flag_bit(cpu, CY));
-    
+    cpu->memory[cpu->sp - 2] = cpu_get_sw(cpu);
     cpu->sp -= 2;
 }
 
@@ -562,11 +566,11 @@ void OUT(CPU *cpu, uint8_t operand) {
 }
 
 void EI(CPU *cpu) {
-    cpu->int_enable = true;
+    cpu_set_flag_bit(cpu, I, true);
 }
 
 void DI(CPU *cpu) {
-    cpu->int_enable = false;
+    cpu_set_flag_bit(cpu, I, false);
 }
 
 void HLT(CPU *cpu) {
