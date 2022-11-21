@@ -938,7 +938,7 @@ void cpu_tick(CPU *cpu) {
         case OP_EXIT:       EXIT(cpu);                    break;
 
         /* Handle undefined opcode encounters */
-        default:            UNDEFINED(cpu);                  break;
+        default:            UNDEFINED(cpu);               break;
         }
 
         cpu->instr_complete = false;
