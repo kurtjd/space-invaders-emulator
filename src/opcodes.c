@@ -49,7 +49,6 @@ static void _update_flag_cy_sub(CPU *cpu, uint8_t val1, uint8_t val2, bool sub_b
 static void _update_flag_ac_sub(CPU *cpu, uint8_t val1, uint8_t val2, bool sub_borrow) {
     int borrow = sub_borrow ? cpu_get_flag_bit(cpu, CY) : 0;
     val1 &= 0xF;
-    //val2 = ~((val2 & 0xF) + borrow) + 1;
     val2 = (~val2) & 0xF;
     cpu_set_flag_bit(cpu, AC, (val1 + val2 + !borrow) > 0xF);
 }
@@ -207,13 +206,13 @@ void STA(CPU *cpu, const uint8_t operands[MAX_OPERANDS]) {
 void LHLD(CPU *cpu, const uint8_t operands[MAX_OPERANDS]) {
     uint16_t addr = (operands[1] << 8) | operands[0];
     cpu->reg[L] = cpu->memory[addr];
-    cpu->reg[H] = cpu->memory[addr + 1];
+    cpu->reg[H] = cpu->memory[(uint16_t)(addr + 1)];
 }
 
 void SHLD(CPU *cpu, const uint8_t operands[MAX_OPERANDS]) {
     uint16_t addr = (operands[1] << 8) | operands[0];
     cpu->memory[addr] = cpu->reg[L];
-    cpu->memory[addr + 1] = cpu->reg[H];
+    cpu->memory[(uint16_t)(addr + 1)] = cpu->reg[H];
 }
 
 void LDAX_RP(CPU *cpu, REGISTERS src) {
@@ -485,8 +484,8 @@ void JCC(CPU *cpu, FLAG_BITS flag, bool cmp, uint8_t operands[MAX_OPERANDS]) {
 }
 
 void CALL(CPU *cpu, uint8_t operands[MAX_OPERANDS]) {
-    cpu->memory[cpu->sp - 1] = cpu->pc >> 8;
-    cpu->memory[cpu->sp - 2] = cpu->pc & 0xFF;
+    cpu->memory[(uint16_t)(cpu->sp - 1)] = cpu->pc >> 8;
+    cpu->memory[(uint16_t)(cpu->sp - 2)] = cpu->pc & 0xFF;
 
     cpu->sp -= 2;
     cpu->pc = (operands[1] << 8) | operands[0];
@@ -500,7 +499,7 @@ void CCC(CPU *cpu, FLAG_BITS flag, bool cmp, uint8_t operands[MAX_OPERANDS]) {
 }
 
 void RET(CPU *cpu) {
-    cpu->pc = (cpu->memory[cpu->sp + 1] << 8) | cpu->memory[cpu->sp];
+    cpu->pc = (cpu->memory[(uint16_t)(cpu->sp + 1)] << 8) | cpu->memory[cpu->sp];
     cpu->sp += 2;
 }
 
@@ -512,8 +511,8 @@ void RCC(CPU *cpu, FLAG_BITS flag, bool cmp) {
 }
 
 void RST_N(CPU *cpu, uint8_t n) {
-    cpu->memory[cpu->sp - 1] = cpu->pc >> 4;
-    cpu->memory[cpu->sp - 2] = cpu->pc & 0xF;
+    cpu->memory[(uint16_t)(cpu->sp - 1)] = cpu->pc >> 4;
+    cpu->memory[(uint16_t)(cpu->sp - 2)] = cpu->pc & 0xF;
 
     cpu->sp -= 2;
     cpu->pc = 8 * n;
@@ -524,21 +523,21 @@ void PCHL(CPU *cpu) {
 }
 
 void PUSH_RP(CPU *cpu, REGISTERS src) {
-    cpu->memory[cpu->sp - 1] = cpu->reg[src];
-    cpu->memory[cpu->sp - 2] = cpu->reg[src + 1];
+    cpu->memory[(uint16_t)(cpu->sp - 1)] = cpu->reg[src];
+    cpu->memory[(uint16_t)(cpu->sp - 2)] = cpu->reg[src + 1];
 
     cpu->sp -= 2;
 }
 
 void PUSH_PSW(CPU *cpu) {
-    cpu->memory[cpu->sp - 1] = cpu->reg[A];
-    cpu->memory[cpu->sp - 2] = cpu_get_sw(cpu);
+    cpu->memory[(uint16_t)(cpu->sp - 1)] = cpu->reg[A];
+    cpu->memory[(uint16_t)(cpu->sp - 2)] = cpu_get_sw(cpu);
     cpu->sp -= 2;
 }
 
 void POP_RP(CPU *cpu, REGISTERS src) {
     cpu->reg[src + 1] = cpu->memory[cpu->sp];
-    cpu->reg[src] = cpu->memory[cpu->sp + 1];
+    cpu->reg[src] = cpu->memory[(uint16_t)(cpu->sp + 1)];
 
     cpu->sp += 2;
 }
@@ -552,13 +551,13 @@ void POP_PSW(CPU *cpu) {
     cpu_set_flag_bit(cpu, Z, psw & (1 << 6));
     cpu_set_flag_bit(cpu, S, psw & (1 << 7));
 
-    cpu->reg[A] = cpu->memory[cpu->sp + 1];
+    cpu->reg[A] = cpu->memory[(uint16_t)(cpu->sp + 1)];
     cpu->sp += 2;
 }
 
 void XTHL(CPU *cpu) {
     _swap(&cpu->reg[L], &cpu->memory[cpu->sp]);
-    _swap(&cpu->reg[H], &cpu->memory[cpu->sp + 1]);
+    _swap(&cpu->reg[H], &cpu->memory[(uint16_t)(cpu->sp + 1)]);
 }
 
 void SPHL(CPU *cpu) {

@@ -611,8 +611,6 @@ void cpu_reset(CPU *cpu) {
     cpu->exit = false;
     cpu->halt = false;
     cpu->total_cycles = 0;
-    cpu->instr_cycles = 0;
-    cpu->cycle_cum = 1;
     cpu->instr_complete = true;
 }
 
