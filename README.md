@@ -1,5 +1,5 @@
 # Intel 8080 Emulator
-<img src = "https://www.clipartmax.com/png/small/168-1683610_space-invaders-icon-space-invaders-png.png">
+<img src = "https://sociable.co/wp-content/uploads/2010/09/SpaceInvader.jpg">
 Exactly what it sounds like.
 
 ## Build
