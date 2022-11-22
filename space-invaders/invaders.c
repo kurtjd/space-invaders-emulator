@@ -46,14 +46,14 @@ void write_shift(uint8_t data) {
 }
 
 uint8_t read_shift(void) {
-    return (shift_reg >> (8 - shift_amnt));
+    return ((shift_reg >> (8 - shift_amnt)) & 0xFF);
 }
 
 void set_shift_amnt(uint8_t data) {
     shift_amnt = data & 7;
 }
 
-/* Input Port 1 */
+/* Input Port 0 */
 uint8_t inp0_reg = 0xFF;
 uint8_t read_inp0(void) {
     return inp0_reg;
@@ -176,7 +176,7 @@ void draw_display(SDL_Window *window, SDL_Surface *surface, const CPU *cpu) {
         int y = 255 - ((i % 32) * 8);
         int x = i / 32;
 
-        for (int k = 0; k < 7; k++) {
+        for (int k = 0; k < 8; k++) {
             int tmp_y = y - k;
 
             if (byte & (1 << k)) {
@@ -202,7 +202,7 @@ int main(void) {
     SDL_Surface *surface = SDL_GetWindowSurface(window);
     SDL_Event e;
 
-    int timer = 0;
+    //int timer = 0;
     while(!cpu.exit) {
         /*if (timer >= 1000) {
             if ((cpu.total_cycles % VBLANK_RATE == 0)) {
@@ -232,7 +232,7 @@ int main(void) {
             cpu_tick(&cpu);
         } while (!cpu.instr_complete);
 
-        SDL_Delay(14);
+        SDL_Delay(5);
         draw_display(window, surface, &cpu);
         cpu.exit = !handle_input(&e);
     }
