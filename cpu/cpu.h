@@ -11,6 +11,9 @@
 #define MAX_MEM 0x10000
 #define NUM_IO 0xFF
 
+typedef uint8_t (*input_ptr)(void);
+typedef void (*output_ptr)(uint8_t);
+
 
 /* This array maps opcodes to a string.
  * Useful for tests and eventual disassembler.
@@ -338,8 +341,8 @@ typedef struct CPU {
     /* Memory-mapped IO (subject to change, might be better to just use the
      * existing memory array).
      */
-    uint8_t (*input[NUM_IO])(void);
-    void (*output[NUM_IO])(uint8_t);
+    input_ptr input[NUM_IO];
+    output_ptr output[NUM_IO];
 
     // Helper stuff
     bool exit; // Signals main to exit loop
