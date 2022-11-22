@@ -338,8 +338,8 @@ typedef struct CPU {
     /* Memory-mapped IO (subject to change, might be better to just use the
      * existing memory array).
      */
-    uint8_t input[NUM_IO];
-    uint8_t output[NUM_IO];
+    uint8_t (*input[NUM_IO])(void);
+    void (*output[NUM_IO])(uint8_t);
 
     // Helper stuff
     bool exit; // Signals main to exit loop
