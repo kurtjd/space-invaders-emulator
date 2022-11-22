@@ -477,11 +477,11 @@ void cpu_tick(CPU *cpu) {
             cpu->memory[cpu->pc + 2]
         };
 
-        if (cpu->instr_complete && cpu->interrupt >= 0 && cpu_get_flag_bit(cpu, I)) {
+        if (cpu->interrupt >= 0 && cpu_get_flag_bit(cpu, I)) {
             opcode = _get_interrupt(cpu->interrupt);
             cpu->interrupt = -1;
             cpu_set_flag_bit(cpu, I, false);
-        } else if (cpu->instr_complete) {
+        } else {
             opcode = cpu->memory[cpu->pc];
 
             /* Manual states PC is incremented before execution. Order is important

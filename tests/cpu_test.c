@@ -79,8 +79,8 @@ int main(int argc, char **argv) {
         debug = true;
     }
 
-    //run_test("../roms/tests/TST8080.COM", 1);
-    //run_test("../roms/tests/8080PRE.COM", 2);
-    //run_test("../roms/tests/CPUTEST.COM", 3);
+    run_test("../roms/tests/TST8080.COM", 1);
+    run_test("../roms/tests/8080PRE.COM", 2);
+    run_test("../roms/tests/CPUTEST.COM", 3);
     run_test("../roms/tests/8080EXM.COM", 4);
 }

@@ -60,7 +60,7 @@ uint8_t read_inp0(void) {
 }
 
 /* Input Port 1 */
-uint8_t inp1_reg = (1 << 3);
+uint8_t inp1_reg = 1;
 uint8_t read_inp1(void) {
     return inp1_reg;
 }
@@ -150,11 +150,29 @@ bool handle_input(SDL_Event *e) {
                 set_port_bit(&inp1_reg, 2, true);
             } else if (keyc == SDLK_c) {
                 set_port_bit(&inp1_reg, 0, true);
+            } else if (keyc == SDLK_t) {
+                set_port_bit(&inp2_reg, 2, true);
+            } else if (keyc == SDLK_SPACE) {
+                set_port_bit(&inp1_reg, 4, true);
+            } else if (keyc == SDLK_RIGHT) {
+                set_port_bit(&inp1_reg, 6, true);
+            } else if (keyc == SDLK_LEFT) {
+                set_port_bit(&inp1_reg, 5, true);
             }
             break;
         case SDL_KEYUP:
             if (keyc == SDLK_RETURN) {
                 set_port_bit(&inp1_reg, 2, false);
+            } else if (keyc == SDLK_c) {
+                set_port_bit(&inp1_reg, 0, false);
+            } else if (keyc == SDLK_t) {
+                set_port_bit(&inp2_reg, 2, false);
+            } else if (keyc == SDLK_SPACE) {
+                set_port_bit(&inp1_reg, 4, false);
+            } else if (keyc == SDLK_RIGHT) {
+                set_port_bit(&inp1_reg, 6, false);
+            } else if (keyc == SDLK_LEFT) {
+                set_port_bit(&inp1_reg, 5, false);
             }
             break;
         }
@@ -232,7 +250,7 @@ int main(void) {
             cpu_tick(&cpu);
         } while (!cpu.instr_complete);
 
-        SDL_Delay(5);
+        SDL_Delay(14);
         draw_display(window, surface, &cpu);
         cpu.exit = !handle_input(&e);
     }
