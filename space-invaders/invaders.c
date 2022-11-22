@@ -31,9 +31,9 @@ typedef enum {
 
 void set_port_bit(uint8_t *port, uint8_t bit, bool high) {
     if (high) {
-        *port |= bit;
+        *port |= (1 << bit);
     } else {
-        *port &= ~bit;
+        *port &= ~(1 << bit);
     }
 }
 
@@ -60,8 +60,7 @@ uint8_t read_inp0(void) {
 }
 
 /* Input Port 1 */
-//uint8_t inp1_reg = (1 << 3) | 1 | (1 << 2);
-uint8_t inp1_reg = 0xFF;
+uint8_t inp1_reg = 0x00;
 uint8_t read_inp1(void) {
     return inp1_reg;
 }
@@ -108,7 +107,7 @@ void port_init(CPU *cpu) {
 bool init_SDL()
 {
     /* Initialize SDL */
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         fprintf(stderr, "Could not initialize SDL: %s\n", SDL_GetError());
         return false;
@@ -140,9 +139,21 @@ SDL_Window *create_window()
 
 bool handle_input(SDL_Event *e) {
     while (SDL_PollEvent(e)) {
+        SDL_Keycode keyc = e->key.keysym.sym;
+
         switch (e->type) {
         case SDL_QUIT:
             return false;
+            break;
+        case SDL_KEYDOWN:
+            if (keyc == SDLK_RETURN) {
+                set_port_bit(&inp1_reg, 2, true);
+            }
+            break;
+        case SDL_KEYUP:
+            if (keyc == SDLK_RETURN) {
+                set_port_bit(&inp1_reg, 2, false);
+            }
             break;
         }
     }
@@ -190,24 +201,27 @@ int main(void) {
     SDL_Event e;
 
     int timer = 0;
-    while(!cpu.exit/* && handle_input(&e)*/) {
+    while(!cpu.exit) {
         if (timer >= 1000) {
-            if (cpu.instr_complete) {
-                //cpu_print_debug(&cpu);
-                //getchar();
-            }
+            //printf("HAX\n");
 
             if ((cpu.total_cycles % VBLANK_RATE == 0)) {
                 cpu_interrupt(&cpu, 2);
                 draw_display(window, surface, &cpu);
+                cpu.exit = !handle_input(&e);
             } else if ((cpu.total_cycles % (VBLANK_RATE / 2) == 0)) {
                 cpu_interrupt(&cpu, 1);
             }
 
             cpu_tick(&cpu);
+
             timer = 0;
         }
 
         timer++;
     }
+
+    SDL_FreeSurface(surface);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 }
