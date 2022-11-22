@@ -583,6 +583,19 @@ static void _init_opcode_size(void) {
     opcode_size[OP_CM]     = 3;
 }
 
+static uint8_t _get_interrupt(int int_num) {
+    switch (int_num) {
+    case 0: return OP_RST_0;
+    case 1: return OP_RST_1;
+    case 2: return OP_RST_2;
+    case 3: return OP_RST_3;
+    case 4: return OP_RST_4;
+    case 5: return OP_RST_5;
+    case 6: return OP_RST_6;
+    case 7: return OP_RST_7;
+    default: return OP_RST_0;
+    }
+}
 
 /*** PUBLIC FUNCTIONS ***/
 void cpu_init(CPU *cpu) {
@@ -612,13 +625,14 @@ void cpu_reset(CPU *cpu) {
     cpu->halt = false;
     cpu->total_cycles = 0;
     cpu->instr_complete = true;
+    cpu->interrupt = -1;
 }
 
 bool cpu_load_rom(CPU *cpu, const char *filename, uint16_t start_addr) {
     FILE *rom = fopen(filename, "rb");
 
     if (rom) {
-        fread(cpu->memory + start_addr, MAX_MEM, 1, rom);
+        (void)fread(cpu->memory + start_addr, MAX_MEM, 1, rom);
         fclose(rom);
         return true;
     }
@@ -656,12 +670,8 @@ uint8_t cpu_get_sw(const CPU *cpu) {
          | (cpu_get_flag_bit(cpu, CY));
 }
 
-void cpu_interrupt(CPU *cpu, uint8_t int_num) {
-    /* Wait for cur instruction to complete? */
-    if (cpu_get_flag_bit(cpu, I)) {
-        RST_N(cpu, int_num);
-        cpu_set_flag_bit(cpu, I, false);
-    }
+void cpu_req_interrupt(CPU *cpu, uint8_t int_num) {
+    cpu->interrupt = int_num;
 }
 
 void cpu_print_debug(const CPU *cpu) {
@@ -678,8 +688,7 @@ void cpu_print_debug(const CPU *cpu) {
 
 void cpu_tick(CPU *cpu) {
     if (cpu->instr_complete) {
-        uint8_t opcode = cpu->memory[cpu->pc];
-        cpu->instr_cycles = opcode_cycles[opcode];
+        uint8_t opcode;
 
         /* In case we run into an opcode that expects 1-2 bytes as "operands"
         * (Such as a 2-byte address)
@@ -693,10 +702,20 @@ void cpu_tick(CPU *cpu) {
             cpu->memory[cpu->pc + 2]
         };
 
-        /* Manual states PC is incremented before execution. Order is important
-        * because some opcodes may change the PC.
-        */
-        cpu->pc += opcode_size[opcode];
+        if (cpu->instr_complete && cpu->interrupt >= 0 && cpu_get_flag_bit(cpu, I)) {
+            opcode = _get_interrupt(cpu->interrupt);
+            cpu->interrupt = -1;
+            cpu_set_flag_bit(cpu, I, false);
+        } else if (cpu->instr_complete) {
+            opcode = cpu->memory[cpu->pc];
+
+            /* Manual states PC is incremented before execution. Order is important
+            * because some opcodes may change the PC.
+            */
+            cpu->pc += opcode_size[opcode];
+        }
+
+        cpu->instr_cycles = opcode_cycles[opcode];
 
         /* Instructions are ordered by their instruction group and by the order in
         * which they appear in the Assembly Manual.
@@ -963,6 +982,7 @@ void cpu_tick(CPU *cpu) {
 
         cpu->instr_complete = false;
         cpu->cycle_cum = 1;
+        cpu->interrupt = -1;
     }
 
     /* Wait for current instruction to complete before

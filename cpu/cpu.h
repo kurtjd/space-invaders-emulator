@@ -351,6 +351,7 @@ typedef struct CPU {
     uint32_t instr_cycles;
     uint32_t cycle_cum;
     bool instr_complete;
+    int interrupt;
 } CPU;
 
 
@@ -379,7 +380,7 @@ void cpu_set_reg_pair(CPU *cpu, REGISTERS reg1, REGISTERS reg2, uint16_t val);
 uint8_t cpu_get_sw(const CPU *cpu);
 
 // Generates an interrupt request
-void cpu_interrupt(CPU *cpu, uint8_t int_num);
+void cpu_req_interrupt(CPU *cpu, uint8_t int_num);
 
 // Prints useful debug information
 void cpu_print_debug(const CPU *cpu);

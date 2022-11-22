@@ -205,14 +205,12 @@ int main(void) {
     int timer = 0;
     while(!cpu.exit) {
         if (timer >= 1000) {
-            //printf("HAX\n");
-
             if ((cpu.total_cycles % VBLANK_RATE == 0)) {
-                cpu_interrupt(&cpu, 2);
+                cpu_req_interrupt(&cpu, 2);
                 draw_display(window, surface, &cpu);
                 cpu.exit = !handle_input(&e);
-            } else if ((cpu.total_cycles % (VBLANK_RATE / 2) == 0)) {
-                cpu_interrupt(&cpu, 1);
+            } else if ((cpu.total_cycles % ((VBLANK_RATE / 2) + 1) == 0)) {
+                cpu_req_interrupt(&cpu, 1);
             }
 
             cpu_tick(&cpu);
