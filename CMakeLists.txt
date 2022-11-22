@@ -11,7 +11,7 @@ add_executable("intel-8080-tests"
     cpu/cpu.c)
 
 target_include_directories("intel-8080-tests" PUBLIC cpu)
-target_compile_options("intel-8080-tests" PRIVATE -Wall -Wextra -Wpedantic)
+target_compile_options("intel-8080-tests" PRIVATE -Wall -Wextra -Wpedantic -Wno-unused-variable -Wno-unused-function -Wno-unused-result)
 
 add_executable("space-invaders"
     space-invaders/invaders.c

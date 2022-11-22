@@ -50,7 +50,7 @@ uint8_t read_shift(void) {
 }
 
 void set_shift_amnt(uint8_t data) {
-    shift_amnt = data;
+    shift_amnt = data & 7;
 }
 
 /* Input Port 1 */
@@ -204,7 +204,7 @@ int main(void) {
 
     int timer = 0;
     while(!cpu.exit) {
-        if (timer >= 1000) {
+        /*if (timer >= 1000) {
             if ((cpu.total_cycles % VBLANK_RATE == 0)) {
                 cpu_req_interrupt(&cpu, 2);
                 draw_display(window, surface, &cpu);
@@ -218,7 +218,23 @@ int main(void) {
             timer = 0;
         }
 
-        timer++;
+        timer++;*/
+
+        while (cpu.total_cycles % VBLANK_RATE != 0) {
+            if ((cpu.total_cycles % ((VBLANK_RATE / 2) + 1) == 0)) {
+                cpu_req_interrupt(&cpu, 1);
+            }
+            cpu_tick(&cpu);
+        }
+        cpu_req_interrupt(&cpu, 2);
+
+        do {
+            cpu_tick(&cpu);
+        } while (!cpu.instr_complete);
+
+        SDL_Delay(14);
+        draw_display(window, surface, &cpu);
+        cpu.exit = !handle_input(&e);
     }
 
     SDL_FreeSurface(surface);

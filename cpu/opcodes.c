@@ -619,6 +619,6 @@ void EXIT(CPU *cpu) {
 }
 
 void UNDEFINED(CPU *cpu) {
-    fprintf(stderr, "Encountered undefined opcode at cycle %d.\n", cpu->total_cycles);
+    fprintf(stderr, "Encountered undefined opcode at cycle %lu.\n", cpu->total_cycles);
     EXIT(cpu);
 }
