@@ -60,7 +60,7 @@ uint8_t read_inp0(void) {
 }
 
 /* Input Port 1 */
-uint8_t inp1_reg = 0x00;
+uint8_t inp1_reg = (1 << 3);
 uint8_t read_inp1(void) {
     return inp1_reg;
 }
@@ -148,6 +148,8 @@ bool handle_input(SDL_Event *e) {
         case SDL_KEYDOWN:
             if (keyc == SDLK_RETURN) {
                 set_port_bit(&inp1_reg, 2, true);
+            } else if (keyc == SDLK_c) {
+                set_port_bit(&inp1_reg, 0, true);
             }
             break;
         case SDL_KEYUP:
