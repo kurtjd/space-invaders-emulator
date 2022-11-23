@@ -20,4 +20,4 @@ add_executable("space-invaders"
 
 target_include_directories("space-invaders" PUBLIC cpu)
 target_compile_options("space-invaders" PRIVATE -Wall -Wextra -Wpedantic -Wno-unused-variable -Wno-unused-function -Wno-unused-result)
-target_link_libraries("space-invaders" -lSDL2)
+target_link_libraries("space-invaders" -lSDL2 SDL2_mixer)

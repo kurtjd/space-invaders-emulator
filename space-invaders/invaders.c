@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include "cpu.h"
 
 #define DISP_WIDTH 224
@@ -24,6 +25,16 @@
 #define SOUND2 5
 
 #define WATCHDOG 6
+
+Mix_Chunk *invader_death_snd;
+Mix_Chunk *invader_stp1_snd;
+Mix_Chunk *invader_stp2_snd;
+Mix_Chunk *invader_stp3_snd;
+Mix_Chunk *invader_stp4_snd;
+Mix_Chunk *player_death_snd;
+Mix_Chunk *shoot_laser_snd;
+Mix_Chunk *ufo_killed_snd;
+Mix_Chunk *ufo_move_snd;
 
 typedef enum {
     CREDIT = 1,
@@ -77,13 +88,46 @@ uint8_t read_inp2(void) {
 }
 
 /* Sound Port 1 */
+uint8_t snd1_reg = 0;
+int ufo_move_chan = -1;
 void write_sound1(uint8_t data) {
-    (void)data;
+    if (data & (1 << 0)) {
+        ufo_move_chan = Mix_PlayChannel(-1, ufo_move_snd, 0);
+    }
+    if (!(snd1_reg & (1 << 1)) && data & (1 << 1)) {
+        Mix_PlayChannel(-1, shoot_laser_snd, 0);
+    }
+    if (!(snd1_reg & (1 << 2)) && data & (1 << 2)) {
+        Mix_PlayChannel(-1, player_death_snd, 0);
+    }
+    if (!(snd1_reg & (1 << 3)) && data & (1 << 3)) {
+        Mix_PlayChannel(-1, invader_death_snd, 0);
+    }
+
+    snd1_reg = data;
 }
 
 /* Sound Port 2 */
+uint8_t snd2_reg = 0;
 void write_sound2(uint8_t data) {
-    (void)data;
+    if (!(snd2_reg & (1 << 1)) && data & (1 << 0)) {
+        Mix_PlayChannel(-1, invader_stp1_snd, 0);
+    }
+    if (!(snd2_reg & (1 << 1)) && data & (1 << 1)) {
+        Mix_PlayChannel(-1, invader_stp2_snd, 0);
+    }
+    if (!(snd2_reg & (1 << 2)) && data & (1 << 2)) {
+        Mix_PlayChannel(-1, invader_stp3_snd, 0);
+    }
+    if (!(snd2_reg & (1 << 3)) && data & (1 << 3)) {
+        Mix_PlayChannel(-1, invader_stp4_snd, 0);
+    }
+    if (!(snd2_reg & (1 << 4)) && data & (1 << 4)) {
+        Mix_HaltChannel(ufo_move_chan); // Otherwise kill sound wont play
+        Mix_PlayChannel(-1, ufo_killed_snd, 0);
+    }
+
+    snd2_reg = data;
 }
 
 /* Watchdog */
@@ -112,7 +156,7 @@ void port_init(CPU *cpu) {
 bool init_SDL()
 {
     /* Initialize SDL */
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
     {
         fprintf(stderr, "Could not initialize SDL: %s\n", SDL_GetError());
         return false;
@@ -249,6 +293,22 @@ void draw_display(SDL_Window *window, SDL_Surface *surface, const CPU *cpu) {
     SDL_UpdateWindowSurface(window);
 }
 
+void init_audio(void) {
+    if( Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+        printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+    }
+
+    invader_death_snd = Mix_LoadWAV("../sound/sounds_invader_death.wav");
+    invader_stp1_snd = Mix_LoadWAV("../sound/sounds_invader_step1.wav");
+    invader_stp2_snd = Mix_LoadWAV("../sound/sounds_invader_step2.wav");
+    invader_stp3_snd = Mix_LoadWAV("../sound/sounds_invader_step3.wav");
+    invader_stp4_snd = Mix_LoadWAV("../sound/sounds_invader_step4.wav");
+    player_death_snd = Mix_LoadWAV("../sound/sounds_player_death.wav");
+    shoot_laser_snd = Mix_LoadWAV("../sound/sounds_shoot_laser.wav");
+    ufo_killed_snd = Mix_LoadWAV("../sound/sounds_ufo_killed.wav");
+    ufo_move_snd = Mix_LoadWAV("../sound/sounds_ufo_move.wav");
+}
+
 int main(void) {
     CPU cpu;
     cpu_init(&cpu);
@@ -257,6 +317,7 @@ int main(void) {
     port_init(&cpu);
 
     init_SDL();
+    init_audio();
     SDL_Window *window = create_window();
     SDL_Surface *surface = SDL_GetWindowSurface(window);
     SDL_Event e;
@@ -299,5 +360,6 @@ int main(void) {
 
     SDL_FreeSurface(surface);
     SDL_DestroyWindow(window);
+    Mix_Quit();
     SDL_Quit();
 }
