@@ -65,27 +65,27 @@ int main(void) {
     SDL_Event e;
 
     while(!cpu.exit) {
-        uint32_t ticks = SDL_GetTicks();
-
-        // Execute all cycles before a screen refresh
-        while (cpu.total_cycles % VBLANK_RATE != 0) {
-            // Generate half-screen interrupt
-            if ((cpu.total_cycles % ((VBLANK_RATE / 2) + 1) == 0)) {
-                cpu_req_interrupt(&cpu, 1);
-            }
-            cpu_tick(&cpu);
-        }
-
-        // Generate full-screen interrupt and process it
-        cpu_req_interrupt(&cpu, 2);
-        do {
-            cpu_tick(&cpu);
-        } while (!cpu.instr_complete);
-
         // Draw the screen and handle input
-        SDL_Delay((1000 / REFRESH_RATE) - (SDL_GetTicks() - ticks));
         display_draw(window, surface, &cpu);
         cpu.exit = !handle_input(&e);
+
+        uint32_t ticks = SDL_GetTicks();
+
+        // Execute all cycles before a half-screen refresh
+        while (cpu.total_cycles < (VBLANK_RATE / 2) + 1) {
+            cpu_tick(&cpu);
+        }
+        cpu_req_interrupt(&cpu, 1);
+
+        // Execute all cycles before a full-screen refresh
+        while (cpu.total_cycles < VBLANK_RATE) {
+            cpu_tick(&cpu);
+        }
+        cpu_req_interrupt(&cpu, 2);
+
+        // Reset cycle counter and sleep until end of refresh period
+        cpu.total_cycles = 0;
+        SDL_Delay((1000 / REFRESH_RATE) - (SDL_GetTicks() - ticks));
     }
 
     SDL_FreeSurface(surface);

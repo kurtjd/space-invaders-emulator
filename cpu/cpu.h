@@ -348,9 +348,6 @@ typedef struct CPU {
     bool exit; // Signals main to exit loop
     bool halt; // Signals CPU to halt until interrupt
     unsigned long total_cycles;
-    unsigned long instr_cycles;
-    unsigned long cycle_cum;
-    bool instr_complete;
     int interrupt;
 } CPU;
 

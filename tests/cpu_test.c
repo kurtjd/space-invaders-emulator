@@ -52,19 +52,16 @@ void run_test(const char *filename, int test_num) {
 
     unsigned long num_instr = 0;
     while(!cpu.exit) {
-        if (cpu.instr_complete) {
-            if (debug) {
-                cpu_print_debug(&cpu);
-                getchar();
-            }
-            if (quit) {
-                quit = false;
-                break;
-            }
-
-            num_instr++;
+        if (debug) {
+            cpu_print_debug(&cpu);
+            getchar();
+        }
+        if (quit) {
+            quit = false;
+            break;
         }
 
+        num_instr++;
         cpu_tick(&cpu);
     }
 
