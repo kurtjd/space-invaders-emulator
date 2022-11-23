@@ -2,6 +2,11 @@
 #include <SDL2/SDL.h>
 #include "cpu.h"
 
+#define DISP_WIDTH 224
+#define DISP_HEIGHT 256
+#define DISP_SCALE 3
+#define DISP_BYTES (DISP_HEIGHT * 28)
+
 #define REFRESH_RATE 60
 #define CPU_CLOCK 2000000
 #define VBLANK_RATE (CPU_CLOCK / REFRESH_RATE)
@@ -54,13 +59,13 @@ void set_shift_amnt(uint8_t data) {
 }
 
 /* Input Port 0 */
-uint8_t inp0_reg = 0xFF;
+uint8_t inp0_reg = 0;
 uint8_t read_inp0(void) {
     return inp0_reg;
 }
 
 /* Input Port 1 */
-uint8_t inp1_reg = 1;
+uint8_t inp1_reg = 0;
 uint8_t read_inp1(void) {
     return inp1_reg;
 }
@@ -119,8 +124,8 @@ bool init_SDL()
 // Create the SDL window.
 SDL_Window *create_window()
 {
-    int window_width = 224;
-    int window_height = 256;
+    int window_width = DISP_WIDTH * DISP_SCALE;
+    int window_height = DISP_HEIGHT * DISP_SCALE;
 
     SDL_Window *new_window = SDL_CreateWindow("Space Invaders",
                                               SDL_WINDOWPOS_CENTERED,
@@ -188,19 +193,45 @@ void set_pixel(SDL_Surface *surface, int x, int y, long color)
     pixels[(y * surface->w) + x] = color;
 }
 
+// This is yucky. Will clean up later.
 void draw_display(SDL_Window *window, SDL_Surface *surface, const CPU *cpu) {
-    for (int i = 0; i < 256 * 28; i++) {
+    for (int i = 0; i < DISP_BYTES; i++) {
         uint8_t byte = cpu->memory[VIDEO_MEMORY_START + i];
-        int y = 255 - ((i % 32) * 8);
-        int x = i / 32;
+
+        int y = (((DISP_HEIGHT * DISP_SCALE) - 1) - ((i % 32) * (8 * (DISP_SCALE))));
+        int x = ((i / 32)) * DISP_SCALE;
 
         for (int k = 0; k < 8; k++) {
-            int tmp_y = y - k;
+            int tmp_y = y - (k * (DISP_SCALE));
 
-            if (byte & (1 << k)) {
-                set_pixel(surface, x, tmp_y, 0xFFFFFFFF);
-            } else {
-                set_pixel(surface, x, tmp_y, 0x00000000);
+            for (int ys = 0; ys < DISP_SCALE; ys++) {
+                for (int xs = 0; xs < DISP_SCALE; xs++) {
+                    int final_x = x + xs;
+                    int final_y = tmp_y - ys;
+                    long color;
+
+                    if (final_y >= 0 && final_y < 32 * DISP_SCALE) {
+                        color = 0xFFFFFF;
+                    }else if (final_y >= 32 * DISP_SCALE && final_y < 64 * DISP_SCALE) {
+                        color = 0xFF0000;
+                    } else if (final_y >= 64 * DISP_SCALE && final_y < 184 * DISP_SCALE) {
+                        color = 0xFFFFFF;
+                    } else if (final_y >= 184 * DISP_SCALE && final_y < 240 * DISP_SCALE) {
+                        color = 0x00FF00;
+                    } else if (final_y >= 240 * DISP_SCALE && final_y < 256 * DISP_SCALE && final_x >= 0 && final_x < 16 * DISP_SCALE) {
+                        color = 0xFFFFFF;
+                    } else if (final_y >= 240 * DISP_SCALE && final_y < 256 * DISP_SCALE && final_x >= 16 * DISP_SCALE && final_x < 134 * DISP_SCALE) {
+                        color = 0x00FF00;
+                    } else if (final_y >= 240 * DISP_SCALE && final_y < 256 * DISP_SCALE && final_x >= 134 * DISP_SCALE && final_x < 224 * DISP_SCALE) {
+                        color = 0xFFFFFF;
+                    }
+
+                    if (byte & (1 << k)) {
+                        set_pixel(surface, final_x, final_y, color);
+                    } else {
+                        set_pixel(surface, final_x, final_y, 0x000000);
+                    }
+                }
             }
         }
     }
@@ -250,7 +281,7 @@ int main(void) {
             cpu_tick(&cpu);
         } while (!cpu.instr_complete);
 
-        SDL_Delay(14);
+        SDL_Delay(10);
         draw_display(window, surface, &cpu);
         cpu.exit = !handle_input(&e);
     }
