@@ -13,11 +13,12 @@ add_executable("intel-8080-tests"
 target_include_directories("intel-8080-tests" PUBLIC cpu)
 target_compile_options("intel-8080-tests" PRIVATE -Wall -Wextra -Wpedantic -Wno-unused-variable -Wno-unused-function -Wno-unused-result)
 
-add_executable("space-invaders"
+add_executable("invaders"
     space-invaders/invaders.c
+    space-invaders/hardware.c
     cpu/opcodes.c
     cpu/cpu.c)
 
-target_include_directories("space-invaders" PUBLIC cpu)
-target_compile_options("space-invaders" PRIVATE -Wall -Wextra -Wpedantic -Wno-unused-variable -Wno-unused-function -Wno-unused-result)
-target_link_libraries("space-invaders" -lSDL2 SDL2_mixer)
+target_include_directories("invaders" PUBLIC cpu hardware)
+target_compile_options("invaders" PRIVATE -Wall -Wextra -Wpedantic -Wno-unused-variable -Wno-unused-function -Wno-unused-result -Wno-unused-parameter)
+target_link_libraries("invaders" -lSDL2 SDL2_mixer)
