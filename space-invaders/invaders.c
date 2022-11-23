@@ -159,10 +159,15 @@ bool handle_input(SDL_Event *e) {
                 set_port_bit(&inp2_reg, 2, true);
             } else if (keyc == SDLK_SPACE) {
                 set_port_bit(&inp1_reg, 4, true);
+                set_port_bit(&inp2_reg, 4, true);
             } else if (keyc == SDLK_RIGHT) {
                 set_port_bit(&inp1_reg, 6, true);
+                set_port_bit(&inp2_reg, 6, true);
             } else if (keyc == SDLK_LEFT) {
                 set_port_bit(&inp1_reg, 5, true);
+                set_port_bit(&inp2_reg, 5, true);
+            } else if (keyc == SDLK_2) {
+                set_port_bit(&inp1_reg, 1, true);
             }
             break;
         case SDL_KEYUP:
@@ -174,10 +179,15 @@ bool handle_input(SDL_Event *e) {
                 set_port_bit(&inp2_reg, 2, false);
             } else if (keyc == SDLK_SPACE) {
                 set_port_bit(&inp1_reg, 4, false);
+                set_port_bit(&inp2_reg, 4, false);
             } else if (keyc == SDLK_RIGHT) {
                 set_port_bit(&inp1_reg, 6, false);
+                set_port_bit(&inp2_reg, 6, false);
             } else if (keyc == SDLK_LEFT) {
                 set_port_bit(&inp1_reg, 5, false);
+                set_port_bit(&inp2_reg, 5, false);
+            } else if (keyc == SDLK_2) {
+                set_port_bit(&inp1_reg, 1, false);
             }
             break;
         }
