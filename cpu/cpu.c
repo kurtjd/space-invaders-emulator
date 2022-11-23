@@ -261,40 +261,30 @@ const char *opcode_str[NUM_OPCODES] = {
     "RST 7"
 };
 
+/* This array maps opcodes to their number of cycles.
+*/
 const int opcode_cycles[NUM_OPCODES] = {
     4, 10, 7, 5, 5, 5, 7, 4, 4, 10, 7, 5, 5, 5, 7, 4,
-
     4, 10, 7, 5, 5, 5, 7, 4, 4, 10, 7, 5, 5, 5, 7, 4,
-
     4, 10, 16, 5, 5, 5, 7, 4, 4, 10, 16, 5, 5, 5, 7, 4,
-
     4, 10, 13, 5, 10, 10, 10, 4, 4, 10, 13, 5, 5, 5, 7, 4,
-
     5, 5, 5, 5, 5, 5, 7, 5, 5, 5, 5, 5, 5, 5, 7, 5,
-
     5, 5, 5, 5, 5, 5, 7, 5, 5, 5, 5, 5, 5, 5, 7, 5,
-
     5, 5, 5, 5, 5, 5, 7, 5, 5, 5, 5, 5, 5, 5, 7, 5,
-
     7, 7, 7, 7, 7, 7, 7, 7, 5, 5, 5, 5, 5, 5, 7, 5,
-
     4, 4, 4, 4, 4, 4, 7, 4, 4, 4, 4, 4, 4, 4, 7, 4,
-
     4, 4, 4, 4, 4, 4, 7, 4, 4, 4, 4, 4, 4, 4, 7, 4,
-
     4, 4, 4, 4, 4, 4, 7, 4, 4, 4, 4, 4, 4, 4, 7, 4,
-
     4, 4, 4, 4, 4, 4, 7, 4, 4, 4, 4, 4, 4, 4, 7, 4,
-
     5, 10, 10, 10, 11, 11, 7, 11, 5, 10, 10, 10, 11, 17, 7, 11,
-
     5, 10, 10, 10, 11, 11, 7, 11, 5, 10, 10, 10, 11, 17, 7, 11,
-
     5, 10, 10, 18, 11, 11, 7, 11, 5, 5, 10, 4, 11, 17, 7, 11,
-
     5, 10, 10, 4, 11, 11, 7, 11, 5, 5, 10, 4, 11, 17, 7, 11
 };
 
+/* Maps each opcode to its size in bytes. Technically opcodes are 1 byte but
+ * they may expect 1-2 bytes as "operands".
+ */
 int opcode_size[NUM_OPCODES];
 
 
@@ -356,20 +346,6 @@ static void _init_opcode_size(void) {
     opcode_size[OP_CP]     = 3;
     opcode_size[OP_JM]     = 3;
     opcode_size[OP_CM]     = 3;
-}
-
-static uint8_t _get_interrupt(int int_num) {
-    switch (int_num) {
-    case 0: return OP_RST_0;
-    case 1: return OP_RST_1;
-    case 2: return OP_RST_2;
-    case 3: return OP_RST_3;
-    case 4: return OP_RST_4;
-    case 5: return OP_RST_5;
-    case 6: return OP_RST_6;
-    case 7: return OP_RST_7;
-    default: return OP_RST_0;
-    }
 }
 
 /*** PUBLIC FUNCTIONS ***/
@@ -444,8 +420,8 @@ uint8_t cpu_get_sw(const CPU *cpu) {
          | (cpu_get_flag_bit(cpu, CY));
 }
 
-void cpu_req_interrupt(CPU *cpu, uint8_t int_num) {
-    cpu->interrupt = int_num;
+void cpu_req_interrupt(CPU *cpu, uint8_t opcode) {
+    cpu->interrupt = opcode;
 }
 
 void cpu_print_debug(const CPU *cpu) {
@@ -475,10 +451,11 @@ void cpu_tick(CPU *cpu) {
         cpu->memory[cpu->pc + 2]
     };
 
+    // If interrupt requested, process interrupt instead of next instruction
     if (cpu->interrupt >= 0 && cpu_get_flag_bit(cpu, I)) {
-        opcode = _get_interrupt(cpu->interrupt);
-        cpu->interrupt = -1;
         cpu_set_flag_bit(cpu, I, false);
+        opcode = cpu->interrupt;
+        cpu->interrupt = -1;
     } else {
         opcode = cpu->memory[cpu->pc];
 

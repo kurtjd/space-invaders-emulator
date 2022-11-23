@@ -20,15 +20,6 @@ typedef void (*output_ptr)(uint8_t);
  */
 extern const char *opcode_str[NUM_OPCODES];
 
-/* This array maps opcodes to their number of cycles.
-*/
-extern const int opcode_cycles[NUM_OPCODES];
-
-/* Maps each opcode to its size in bytes. Technically opcodes are 1 byte but
- * they may expect 1-2 bytes as "operands".
- */
-extern int opcode_size[NUM_OPCODES];
-
 
 /* This enum associates each mnemonic with it's actual binary opcode.
  * Could just be helpful for making switch more readable.
@@ -294,7 +285,6 @@ typedef enum {
     OP_RST_7
 } OPCODES;
 
-
 // Maps register "mnemonics" to an actual register number
 typedef enum {
     B,
@@ -307,19 +297,11 @@ typedef enum {
     FLAGS   // 5-Bit Status Flags
 } REGISTERS;
 
-
 /* Maps each status flag "mnemonic" to it's corresponding bit.
  * These mnemonics are lifted from the manual itself.
  * There doesn't appear to be a specific bit mapping of flags so I think
  * it's just left up to us.
  */
-/*typedef enum {
-    CY = 1 << 0,  // Carry Bit
-    AC = 1 << 1,  // Aux Carry Bit
-    S =  1 << 2,  // Sign Bit
-    Z =  1 << 3,  // Zero Bit
-    P =  1 << 4   // Parity Bit
-} FLAG_BITS;*/
 typedef enum {
     S   = 1 << 5,  // Sign Bit
     Z   = 1 << 4,  // Zero Bit
@@ -335,19 +317,22 @@ typedef struct CPU {
     uint16_t pc; // Program counter register
     uint16_t sp; // Stack pointer register
     uint8_t reg[NUM_REGS]; // 8-bit registers
-
     uint8_t memory[MAX_MEM]; // Memory, including data and code
 
-    /* Memory-mapped IO (subject to change, might be better to just use the
-     * existing memory array).
+    /* Memory-Mapped IO
+     * Each "port" is mapped to a function pointer that simulates reading/writing
+     * from a hardware peripheral
      */
     input_ptr input[NUM_IO];
     output_ptr output[NUM_IO];
 
     // Helper stuff
     bool exit; // Signals main to exit loop
-    bool halt; // Signals CPU to halt until interrupt
+    bool halt; // Signals CPU to halt until interrupt (not functional)
     unsigned long total_cycles;
+
+    // Represents the pending interrupt opcode
+    // -1 signifies no pending interrupt
     int interrupt;
 } CPU;
 

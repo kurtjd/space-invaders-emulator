@@ -75,13 +75,13 @@ int main(void) {
         while (cpu.total_cycles < (VBLANK_RATE / 2) + 1) {
             cpu_tick(&cpu);
         }
-        cpu_req_interrupt(&cpu, 1);
+        cpu_req_interrupt(&cpu, OP_RST_1);
 
         // Execute all cycles before a full-screen refresh
         while (cpu.total_cycles < VBLANK_RATE) {
             cpu_tick(&cpu);
         }
-        cpu_req_interrupt(&cpu, 2);
+        cpu_req_interrupt(&cpu, OP_RST_2);
 
         // Reset cycle counter and sleep until end of refresh period
         cpu.total_cycles = 0;
