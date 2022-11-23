@@ -53,7 +53,7 @@ void run_test(const char *filename, int test_num) {
     unsigned long num_instr = 0;
     while(!cpu.exit) {
         if (cpu.instr_complete) {
-            if (debug && num_instr == 1000000000) {
+            if (debug) {
                 cpu_print_debug(&cpu);
                 getchar();
             }
