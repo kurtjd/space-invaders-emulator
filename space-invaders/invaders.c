@@ -279,6 +279,7 @@ int main(void) {
 
         timer++;*/
 
+        uint32_t ticks = SDL_GetTicks();
         while (cpu.total_cycles % VBLANK_RATE != 0) {
             if ((cpu.total_cycles % ((VBLANK_RATE / 2) + 1) == 0)) {
                 cpu_req_interrupt(&cpu, 1);
@@ -291,7 +292,7 @@ int main(void) {
             cpu_tick(&cpu);
         } while (!cpu.instr_complete);
 
-        SDL_Delay(10);
+        SDL_Delay(17 - (SDL_GetTicks() - ticks));
         draw_display(window, surface, &cpu);
         cpu.exit = !handle_input(&e);
     }
