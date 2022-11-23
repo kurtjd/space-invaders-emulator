@@ -292,7 +292,7 @@ int main(void) {
             cpu_tick(&cpu);
         } while (!cpu.instr_complete);
 
-        SDL_Delay(17 - (SDL_GetTicks() - ticks));
+        SDL_Delay((1000 / REFRESH_RATE) - (SDL_GetTicks() - ticks));
         draw_display(window, surface, &cpu);
         cpu.exit = !handle_input(&e);
     }
