@@ -1,11 +1,12 @@
 Place the following files in this folder:
 
-fleet1.wav
-fleet2.wav
-fleet3.wav
-fleet4.wav
-invader_death.wav
-player_death.wav
-shoot_laser.wav
-ufo_hit.wav
-ufo_move.wav
+0.wav
+1.wav
+2.wav
+3.wav
+4.wav
+5.wav
+6.wav
+7.wav
+8.wav
+9.wav

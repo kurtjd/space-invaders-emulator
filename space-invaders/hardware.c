@@ -1,7 +1,7 @@
 #include <SDL2/SDL_mixer.h>
 #include "hardware.h"
 
-#define NUM_SOUNDS 9
+#define NUM_SOUNDS 10
 
 static SDL_Event e;
 
@@ -22,6 +22,8 @@ typedef enum {
     SHOT = (1 << 1),
     PLAYER_DIE = (1 << 2),
     INVADER_DIE = (1 << 3),
+    EXTRA_LIFE = (1 << 4),
+
     FLEET_MOVE1 = 1,
     FLEET_MOVE2 = (1 << 1),
     FLEET_MOVE3 = (1 << 2),
@@ -38,15 +40,16 @@ static uint16_t shift_reg = 0;
 static uint8_t shift_amnt_reg = 0;
 
 typedef enum {
-    INVADER_DEATH_SND,
-    PLAYER_DEATH_SND,
-    SHOOT_LASER_SND,
-    UFO_HIT_SND,
     UFO_MOVE_SND,
+    SHOOT_LASER_SND,
+    PLAYER_DEATH_SND,
+    INVADER_DEATH_SND,
     FLEET1_SND,
     FLEET2_SND,
     FLEET3_SND,
-    FLEET4_SND
+    FLEET4_SND,
+    UFO_HIT_SND,
+    EXTRA_LIFE_SND
 } SOUND_INST;
 
 /* Sound instances */
@@ -81,6 +84,9 @@ void write_snd1(uint8_t data) {
     }
     if (!(snd1_reg & INVADER_DIE) && (data & INVADER_DIE) && sounds[INVADER_DEATH_SND]) {
         Mix_PlayChannel(-1, sounds[INVADER_DEATH_SND], 0);
+    }
+    if (!(snd1_reg & EXTRA_LIFE) && (data & EXTRA_LIFE) && sounds[EXTRA_LIFE_SND]) {
+        Mix_PlayChannel(-1, sounds[EXTRA_LIFE_SND], 0);
     }
 
     snd1_reg = data;
@@ -177,15 +183,16 @@ bool audio_init(void) {
         return false;
     }
 
-    sounds[INVADER_DEATH_SND] = Mix_LoadWAV("../sound/invader_death.wav");
-    sounds[FLEET1_SND] = Mix_LoadWAV("../sound/fleet1.wav");
-    sounds[FLEET2_SND] = Mix_LoadWAV("../sound/fleet2.wav");
-    sounds[FLEET3_SND] = Mix_LoadWAV("../sound/fleet3.wav");
-    sounds[FLEET4_SND] = Mix_LoadWAV("../sound/fleet4.wav");
-    sounds[PLAYER_DEATH_SND] = Mix_LoadWAV("../sound/player_death.wav");
-    sounds[SHOOT_LASER_SND] = Mix_LoadWAV("../sound/shoot_laser.wav");
-    sounds[UFO_HIT_SND] = Mix_LoadWAV("../sound/ufo_hit.wav");
-    sounds[UFO_MOVE_SND] = Mix_LoadWAV("../sound/ufo_move.wav");
+    sounds[UFO_MOVE_SND] = Mix_LoadWAV("../sound/0.wav");
+    sounds[SHOOT_LASER_SND] = Mix_LoadWAV("../sound/1.wav");
+    sounds[PLAYER_DEATH_SND] = Mix_LoadWAV("../sound/2.wav");
+    sounds[INVADER_DEATH_SND] = Mix_LoadWAV("../sound/3.wav");
+    sounds[FLEET1_SND] = Mix_LoadWAV("../sound/4.wav");
+    sounds[FLEET2_SND] = Mix_LoadWAV("../sound/5.wav");
+    sounds[FLEET3_SND] = Mix_LoadWAV("../sound/6.wav");
+    sounds[FLEET4_SND] = Mix_LoadWAV("../sound/7.wav");
+    sounds[UFO_HIT_SND] = Mix_LoadWAV("../sound/8.wav");
+    sounds[EXTRA_LIFE_SND] = Mix_LoadWAV("../sound/9.wav");
 
     for (int i = 0; i < NUM_SOUNDS; i++) {
         if (!sounds[i]) {
