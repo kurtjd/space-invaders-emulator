@@ -1,18 +1,29 @@
-# Intel 8080 Emulator
+# Space Invaders (1978) Emulator
 <img src = "/screenshots/SpaceInvaders.gif?raw=true">
-Exactly what it sounds like.
+A fully-functional complete emulation of the 1978 Space Invaders arcade machine as well as the Intel 8080 microprocessor.
+
+## Features
+* Complete Intel 8080 CPU emulator with accurate cycle count that passes multiple test ROMs
+* Space Invaders arcade machine emulator with accurate display and interrupt timing
+
+## Requirements
+* SDL2
+* SDL2_mixer
+* CMake (for automatic build)
 
 ## Build
-`mkdir build && cd build`  
-`cmake -B. --config Release ..`  
-`make`
+`cmake -S . -B build -DCMAKE_BUILD_TYPE=Release`  
+`make invaders` (to build the space invaders emulator)  
+`make intel-8080-tests` (to build the CPU tester)
 
 ## Run
 ### Linux
-`./intel-8080-tests`
+`./invaders` (Space Invaders Emulator)  
+`./intel-8080-tests` (CPU Tester)
 
 ### Windows
-`intel-8080-tests.exe`
+`invaders.exe` (Space Invaders Emulator)  
+`intel-8080-tests.exe` (CPU Tester)
 
 ## References
 [Intel 8080 User/Assembly Manuals](docs)  
