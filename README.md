@@ -27,6 +27,17 @@ A fully-functional and complete emulation of the 1978 Space Invaders arcade mach
 `invaders.exe` (Space Invaders Emulator)  
 `intel-8080-tests.exe <0:1>` (CPU Tester (1 to enable debug output))
 
+## Controls
+|Key|Action|
+|---|------|
+|`C`|Insert Coin|
+|`ENTER`|1P Start|
+|`2`|2P Start|
+|`SPACE`|Shoot|
+|`LEFT`|Move Left|
+|`RIGHT`|Move Right|
+|`T`|Tilt|
+
 ## References
 [Intel 8080 User/Assembly Manuals](docs)  
 [Computer Archaeology](https://www.computerarcheology.com/Arcade/SpaceInvaders/)  
