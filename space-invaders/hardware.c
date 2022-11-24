@@ -168,15 +168,15 @@ void audio_init(void) {
         printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
     }
 
-    invader_death_snd = Mix_LoadWAV("../sound/sounds_invader_death.wav");
-    invader_stp1_snd = Mix_LoadWAV("../sound/sounds_invader_step1.wav");
-    invader_stp2_snd = Mix_LoadWAV("../sound/sounds_invader_step2.wav");
-    invader_stp3_snd = Mix_LoadWAV("../sound/sounds_invader_step3.wav");
-    invader_stp4_snd = Mix_LoadWAV("../sound/sounds_invader_step4.wav");
-    player_death_snd = Mix_LoadWAV("../sound/sounds_player_death.wav");
-    shoot_laser_snd = Mix_LoadWAV("../sound/sounds_shoot_laser.wav");
-    ufo_killed_snd = Mix_LoadWAV("../sound/sounds_ufo_killed.wav");
-    ufo_move_snd = Mix_LoadWAV("../sound/sounds_ufo_move.wav");
+    invader_death_snd = Mix_LoadWAV("../sound/invader_death.wav");
+    invader_stp1_snd = Mix_LoadWAV("../sound/fleet1.wav");
+    invader_stp2_snd = Mix_LoadWAV("../sound/fleet2.wav");
+    invader_stp3_snd = Mix_LoadWAV("../sound/fleet3.wav");
+    invader_stp4_snd = Mix_LoadWAV("../sound/fleet4.wav");
+    player_death_snd = Mix_LoadWAV("../sound/player_death.wav");
+    shoot_laser_snd = Mix_LoadWAV("../sound/shoot_laser.wav");
+    ufo_killed_snd = Mix_LoadWAV("../sound/ufo_hit.wav");
+    ufo_move_snd = Mix_LoadWAV("../sound/ufo_move.wav");
 }
 
 void audio_quit(void) {

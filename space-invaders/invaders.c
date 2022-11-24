@@ -55,7 +55,10 @@ SDL_Window *create_window()
 int main(void) {
     CPU cpu;
     cpu_init(&cpu);
-    cpu_load_rom(&cpu, "../roms/space-invaders/invaders.bin", 0x0000);
+    cpu_load_rom(&cpu, "../roms/space-invaders/invaders.h", 0x0000);
+    cpu_load_rom(&cpu, "../roms/space-invaders/invaders.g", 0x0800);
+    cpu_load_rom(&cpu, "../roms/space-invaders/invaders.f", 0x1000);
+    cpu_load_rom(&cpu, "../roms/space-invaders/invaders.e", 0x1800);
     port_init(&cpu);
 
     init_SDL();
