@@ -39,10 +39,10 @@ void write_watchdog(uint8_t data);
 void display_draw(SDL_Window *window, SDL_Surface *surface, const CPU *cpu);
 
 /* Audio */
-void audio_init(void);
+bool audio_init(void);
 void audio_quit(void);
 
 /* Buttons */
-bool handle_input(SDL_Event *e);
+bool handle_input(void);
 
 #endif

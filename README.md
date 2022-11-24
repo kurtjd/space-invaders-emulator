@@ -16,16 +16,16 @@ A fully-functional and complete emulation of the 1978 Space Invaders arcade mach
 ## Build
 `cmake -S . -B build -DCMAKE_BUILD_TYPE=Release`  
 `make invaders` (to build the space invaders emulator)  
-`make intel-8080-tests` (to build the CPU tester)
+`make cpu-tests` (to build the CPU tester)
 
 ## Run
 ### Linux
 `./invaders` (Space Invaders Emulator)  
-`./intel-8080-tests <0:1>` (CPU Tester (1 to enable debug output))
+`./cpu-tests <0:1>` (CPU Tester (1 to enable debug output))
 
 ### Windows
 `invaders.exe` (Space Invaders Emulator)  
-`intel-8080-tests.exe <0:1>` (CPU Tester (1 to enable debug output))
+`cpu-tests.exe <0:1>` (CPU Tester (1 to enable debug output))
 
 ## Controls
 |Key|Action|

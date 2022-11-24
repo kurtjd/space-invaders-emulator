@@ -19,21 +19,12 @@ void port_init(CPU *cpu) {
 }
 
 // Initializes SDL
-bool init_SDL()
-{
-    /* Initialize SDL */
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
-    {
-        fprintf(stderr, "Could not initialize SDL: %s\n", SDL_GetError());
-        return false;
-    }
-
-    return true;
+bool init_SDL() {
+    return SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) >= 0;
 }
 
 // Create the SDL window
-SDL_Window *create_window()
-{
+SDL_Window *create_window() {
     int window_width = DISP_WIDTH * DISP_SCALE;
     int window_height = DISP_HEIGHT * DISP_SCALE;
 
@@ -43,11 +34,6 @@ SDL_Window *create_window()
                                               window_width,
                                               window_height,
                                               SDL_WINDOW_SHOWN);
-    if (!new_window)
-    {
-        fprintf(stderr, "Could not create SDL window: %s\n", SDL_GetError());
-        return NULL;
-    }
 
     return new_window;
 }
@@ -55,27 +41,45 @@ SDL_Window *create_window()
 int main(void) {
     CPU cpu;
     cpu_init(&cpu);
-    cpu_load_rom(&cpu, "../roms/space-invaders/invaders.h", 0x0000);
-    cpu_load_rom(&cpu, "../roms/space-invaders/invaders.g", 0x0800);
-    cpu_load_rom(&cpu, "../roms/space-invaders/invaders.f", 0x1000);
-    cpu_load_rom(&cpu, "../roms/space-invaders/invaders.e", 0x1800);
+    if    (!cpu_load_rom(&cpu, "../roms/space-invaders/invaders.h", 0x0000)
+        || !cpu_load_rom(&cpu, "../roms/space-invaders/invaders.g", 0x0800)
+        || !cpu_load_rom(&cpu, "../roms/space-invaders/invaders.f", 0x1000)
+        || !cpu_load_rom(&cpu, "../roms/space-invaders/invaders.e", 0x1800)) {
+        fprintf(stderr, "Could not open Space Invaders ROM files.\n");
+        return 1;
+    }
     port_init(&cpu);
 
-    init_SDL();
-    audio_init();
+    if (!init_SDL()) {
+        fprintf(stderr, "Could not initialize SDL: %s\n", SDL_GetError());
+        return 1;
+    }
+
     SDL_Window *window = create_window();
+    if (!window) {
+        fprintf(stderr, "Could not create SDL window: %s\n", SDL_GetError());
+        return 1;
+    }
+
     SDL_Surface *surface = SDL_GetWindowSurface(window);
-    SDL_Event e;
+    if (!surface) {
+        fprintf(stderr, "Could not create SDL surface: %s\n", SDL_GetError());
+        return 1;
+    }
+
+    if (!audio_init()) {
+        fprintf(stderr, "Could not initialize SDL mixer.\n");
+    }
 
     while(!cpu.exit) {
         // Draw the screen and handle input
         display_draw(window, surface, &cpu);
-        cpu.exit = !handle_input(&e);
+        cpu.exit = !handle_input();
 
         uint32_t ticks = SDL_GetTicks();
 
         // Execute all cycles before a half-screen refresh
-        while (cpu.total_cycles < (VBLANK_RATE / 2) + 1) {
+        while (cpu.total_cycles < (VBLANK_RATE / 2)) {
             cpu_tick(&cpu);
         }
         cpu_req_interrupt(&cpu, OP_RST_1);

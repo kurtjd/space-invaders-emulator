@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 3.1)
 
-project(Intel-8080-Emulator
+project(Space-Invaders-Emulator
     VERSION 1.0
-    DESCRIPTION "Space Invaders and Stuff!"
+    DESCRIPTION "Space Invaders and Intel 8080 Emulator"
     LANGUAGES C)
 
-add_executable("intel-8080-tests"
+add_executable("cpu-tests"
     tests/cpu_test.c
     cpu/opcodes.c
     cpu/cpu.c)
 
-target_include_directories("intel-8080-tests" PUBLIC cpu)
-target_compile_options("intel-8080-tests" PRIVATE -Wall -Wextra -Wpedantic -Wno-unused-variable -Wno-unused-function -Wno-unused-result)
+target_include_directories("cpu-tests" PUBLIC cpu)
+target_compile_options("cpu-tests" PRIVATE -Wall -Wextra -Wpedantic -Wno-unused-variable -Wno-unused-function -Wno-unused-result -Wno-unused-parameter)
 
 add_executable("invaders"
     space-invaders/invaders.c
